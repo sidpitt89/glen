@@ -7,13 +7,6 @@
       this.dT = 0;
       this.lastFrameTimeMs = 0;
 
-      // things that aren't really necessary
-      this.rotating = false;
-      this.rotationAmount = (2 * Math.PI) / 360;
-      this.currentRotation = 0;
-
-      // end unnecessary things
-
       // input states
       this.shooterMovement = 0;
       this.shooterMovementX = 0;
@@ -37,127 +30,6 @@
       this.levelInfo = new LevelInfo(this, this.renderer);
       this.currentLevel = new Level(this.levelInfo.levels[1]);
       this.currentLevel.load(this);
-      // this.entities = [];
-      // this.enemies = [];
-      // this.projectileSources = [];
-      // this.walls = [];
-      // var shooterInfo = {
-      //   x: 200,
-      //   y: 100,
-      //   z: 0,
-      //   r: {
-      //     x: 0, y: 0, z: 0, rZ: 0.001,
-      //   },
-      //   w: 20,
-      //   h: 20,
-      //   game: this,
-      //   programInfo: this.renderer.programInfoBasic,
-      //   bufferInfo: this.renderer.shooterBufferInfo,
-      //   uniforms: this.renderer.shooterUniforms,
-      // };
-      // var enemyInfo = {
-      //   x: 30,
-      //   y: 500,
-      //   z: 0,
-      //   r: {
-      //     x: 0, y: 0, z: 0, rZ: 0.001,
-      //   },
-      //   w: 12,
-      //   h: 12,
-      //   vX: 2,
-      //   game: this,
-      //   health: 5,
-      //   programInfo: this.renderer.programInfoBasic,
-      //   bufferInfo: this.renderer.enemyBufferInfo,
-      //   uniforms: this.renderer.enemyUniforms,
-      //   movementBounds: [0, this.renderer.gl.canvas.width, this.renderer.gl.canvas.height, 0],
-      // };
-      // var barrelInfo = {
-      //   x: 300,
-      //   y: 400,
-      //   z: 0,
-      //   r: {
-      //     x: 0, y: 0, z: 0, rZ: 0.001,
-      //   },
-      //   w: 20,
-      //   h: 20,
-      //   vX: 0,
-      //   game: this,
-      //   health: 5,
-      //   programInfo: this.renderer.programInfoBasic,
-      //   bufferInfo: this.renderer.squareBufferInfo,
-      //   uniforms: this.renderer.barrelUniforms,
-      //   movementBounds: [0, this.renderer.gl.canvas.width, this.renderer.gl.canvas.height, 0],
-      // };
-      // var wallInfo = {
-      //   x: 100,
-      //   y: 200,
-      //   z: 0,
-      //   w: 20,
-      //   h: 200,
-      //   vX: 0,
-      //   game: this,
-      //   programInfo: this.renderer.programInfoBasic,
-      //   bufferInfo: this.renderer.squareBufferInfo,
-      //   uniforms: this.renderer.wallUniforms,
-      // };
-      //
-      // var shooterEmitterInfo = {
-      //   x: 0,
-      //   y: 0,
-      //   z: 0,
-      //   pW: 5,
-      //   pH: 5,
-      //   r: {
-      //     x: 0, y: 0, z: 0, rZ: 0.001,
-      //   },
-      //   maxP: 300,
-      //   pWait: 20,
-      //   pVx: 0.000,
-      //   pVy: 0.4,
-      //   pVRand: 0.05,
-      //   game: this,
-      //   programInfo: null,
-      //   bufferInfo: null,
-      //   uniforms: null,
-      //   particleProgramInfo: this.renderer.programInfoBasic,
-      //   particleBufferInfo: this.renderer.squareBufferInfo,
-      //   particleUniforms: this.renderer.bulletUniforms,
-      // };
-      //
-      // shooterInfo.emitterInfo = shooterEmitterInfo;
-      //
-      // var shooter = new Shooter(shooterInfo);
-      // this.entities.push(shooter);
-      // this.shooter = shooter;
-      //
-      // var ey = 500;
-      // for (var ej = 0; ej < 12; ej++) {
-      //   enemyInfo.y = ey;
-      //   for (var ei = 0; ei < 40; ei++) {
-      //     enemyInfo.x = 14 + (ei * 14);
-      //     var enemy = new Enemy(enemyInfo);
-      //     this.entities.push(enemy);
-      //     this.enemies.push(enemy);
-      //   }
-      //   ey -= 30;
-      // }
-      //
-      // var redBarrel = new RedBarrel(barrelInfo);
-      // this.entities.push(redBarrel);
-      // this.enemies.push(redBarrel);
-      //
-      // for (var bj = 0; bj < 10; bj++) {
-      //   barrelInfo.x = 50 + (bj * 20) + Math.random() * 50;
-      //   barrelInfo.y = 100 + (bj * 20) + Math.random() * 100;
-      //   var redBarrel = new RedBarrel(barrelInfo);
-      //   this.entities.push(redBarrel);
-      //   this.enemies.push(redBarrel);
-      // }
-      //
-      // var wall = new Wall(wallInfo);
-      // this.entities.push(wall);
-      // this.walls.push(wall);
     }
 
     addListeners() {
@@ -261,14 +133,14 @@
     }
 
     update(dT) {
-      // if (rotating) {
-      //   currentRotation += rotationAmount;
-      //   currentRotation = currentRotation % (2 * Math.PI);
-      // }
-      //
+      // This is a hacky little way to allow WASD to move the shooter.
+      // Once it stops flying off-screen, it shouldn't be necessary.
       this.shooter.x += this.shooterMovementX;
       this.shooter.y += this.shooterMovementY;
+
+      // TODO: Get all this game-specific code out of here!
       this.shooter.shooting = this.shooterShooting;
+
       for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].update(dT);
       }
@@ -276,6 +148,8 @@
       var removedProjectiles = [];
       var removedEnemies = [];
 
+      // TODO: There's a bug with explosions occasionally removing the shooter.
+      // TODO: Also all this logic should go somewhere else. ???
       for (var p = 0; p < this.projectileSources.length; p++) {
         var ps = this.projectileSources[p];
         for (var pp = 0; pp < ps.projectiles.length; pp++) {
@@ -352,55 +226,9 @@
         this.enemies.splice(this.enemies.indexOf(removedEnemies[ei]), 1);
         this.entities.splice(this.entities.indexOf(removedEnemies[ei]), 1);
       }
-      // for (var j = 0; j < this.projectileSources.length; j++) {
-      //   var ps = this.projectileSources[j];
-      //   var projectiles = ps.projectiles;
-      //   for (var i = 0; i < projectiles.length; i++) {
-      //     var p = projectiles[i];
-      //     if (p.spent) {
-      //       continue;
-      //     }
-      //
-      //     for (var j = 0; j < this.enemies.length; j++) {
-      //       var e = this.enemies[j];
-      //       if (e.removed) {
-      //         continue;
-      //       }
-      //       if (e.intersects(p)) {
-      //         p.spent = true;
-      //         removedProjectiles.push(p);
-      //
-      //         e.takeDamage();
-      //         if (e.dead) {
-      //           e.removed = true;
-      //           removedEnemies.push(e);
-      //         }
-      //         break;
-      //       }
-      //     }
-      //   }
-      //
-      //   for (var bi = 0; bi < removedProjectiles.length; bi++) {
-      //     projectiles.splice(projectiles.indexOf(removedProjectiles[bi]), 1);
-      //   }
-      //   for (var ei = 0; ei < removedEnemies.length; ei++) {
-      //     this.enemies.splice(this.enemies.indexOf(removedEnemies[ei]), 1);
-      //     this.entities.splice(this.entities.indexOf(removedEnemies[ei]), 1);
-      //   }
-      // }
-      //
-      // strands.forEach(function(strand) {
-      //   strand.update(dT);
-      // });
     }
 
     render(dT) {
-      // var time = dT * 0.001;
-      //
-      //
-      // var fadeTime = time;
-      // var fade = Math.min(1, fadeTime / 6);
-
       this.renderer.startRender();
 
       for (var i = 0; i < this.entities.length; i++) {
@@ -408,12 +236,6 @@
       }
 
       this.renderer.finishRender();
-
-      // twgl.setUniforms(programInfo, uniforms);
-      // gl.useProgram(programInfo.program);
-      // strands.forEach(function(strand) {
-      //   strand.render();
-      // });
     }
 
     registerProjectileSource(ps) {
@@ -486,9 +308,18 @@
     }
     game.dT += (time - game.lastFrameTimeMs);
     game.lastFrameTimeMs = time;
+
+    var numUpdates = 0;
+    var threshold = 150;
     while (game.dT >= game.timestep) {
       game.update(game.timestep);
       game.dT -= game.timestep;
+      numUpdates++;
+      if (numUpdates > threshold) {
+        // Bail on this nonsense.
+        console.warn("Too much catch-up.")
+        game.dT = 0;
+      }
     }
     game.render(game.dT);
 
