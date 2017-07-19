@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>glentest</title>
+    <script src="bower_components/twgl.js/dist/2.x/twgl-full.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="600"></canvas>
+    <div id="editControls" style="display: none;">
+      <button id="wallMode">Wall</button>
+      <button id="enemyMode">Enemy</button>
+      <a id="exportLevel">Export</a>
+      <input type="file" id="importLevel">Import</input>
+    </div>
+    <script id="vs" type="notjs">
+      attribute vec4 a_position;
+      uniform mat4 u_matrix;
+      void main(void) {
+        gl_Position = u_matrix * a_position;
+      }
+    </script>
+    <script id="fs" type="notjs">
+      precision mediump float;
+      uniform vec4 u_color;
+      void main(void) {
+        gl_FragColor = u_color;
+      }
+    </script>
+    <script src="src/Renderer.js"></script>
+    <script src="src/Entity.js"></script>
+    <script src="src/Emitter.js"></script>
+    <script src="src/ShooterEmitter.js"></script>
+    <script src="src/Shooter.js"></script>
+    <script src="src/Enemy.js"></script>
+    <script src="src/RedBarrel.js"></script>
+    <script src="src/Wall.js"></script>
+    <script src="src/levels/Level.js"></script>
+    <script src="src/levels/LevelInfo.js"></script>
+
+    <script src="src/displayObjects.js"></script>
+    <script src="src/main.js"></script>
+  </body>
+</html>

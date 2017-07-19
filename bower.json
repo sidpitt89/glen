@@ -1,0 +1,21 @@
+{
+  "name": "glengit",
+  "homepage": "https://github.com/sidpitt89/glen",
+  "authors": [
+    "Sid Pitt <sidpitt89@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "twgl.js": "^3.4.0"
+  }
+}
