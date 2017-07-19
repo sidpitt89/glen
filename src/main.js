@@ -21,6 +21,7 @@
       this.enemies = [];
       this.projectileSources = [];
       this.walls = [];
+      this.regions = [];
 
       this.initState();
       this.addListeners();

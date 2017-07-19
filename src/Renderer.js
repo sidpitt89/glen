@@ -159,6 +159,10 @@ class Renderer {
       u_matrix: this.m4.identity(),
       u_color: [1, 1, 0.5, 1.0],
     };
+    this.regionUniforms = {
+      u_matrix: this.m4.identity(),
+      u_color: [0.5, 1, 0.5, 0.1],
+    }
 
     // TODO: evaluate if these are necessary, now that the focus is primarily on
     // TODO: two-dimensional creations.

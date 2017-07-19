@@ -5,11 +5,13 @@ class Level {
     this.enemyInfo = info.enemyInfo;
     this.interactivesInfo = info.interactivesInfo;
     this.wallInfo = info.wallInfo;
+    this.regionInfo = info.regionInfo;
     this.shooterInfo = info.shooterInfo;
 
     this.enemyInitFunction = info.enemyInitFunction;
     this.interactivesInitFunction = info.interactivesInitFunction;
     this.wallInitFunction = info.wallInitFunction;
+    this.regionInitFunction = info.regionInitFunction;
     this.shooterInitFunction = info.shooterInitFunction;
 
     this.wallAddFunction = info.wallAddFunction;
@@ -35,6 +37,7 @@ class Level {
     this.initEnemies(game);
     this.initInteractives(game);
     this.initWalls(game);
+    this.initRegions(game);
     this.initShooter(game);
   }
 
@@ -53,6 +56,12 @@ class Level {
   initWalls(game) {
     if (this.wallInfo && this.wallInitFunction) {
       this.wallInitFunction(this.wallInfo, game);
+    }
+  }
+
+  initRegions(game) {
+    if (this.regionInfo && this.regionInitFunction) {
+      this.regionInitFunction(this.regionInfo, game);
     }
   }
 

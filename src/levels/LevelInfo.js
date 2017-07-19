@@ -245,6 +245,22 @@ class LevelInfo {
       ],
     };
 
+    var regionInfo = {
+      x: 0,
+      y: 0,
+      z: 0,
+      w: 0,
+      h: 0,
+      game: this.game,
+      programInfo: this.renderer.programInfoBasic,
+      bufferInfo: this.renderer.squareBufferInfo,
+      uniforms: this.renderer.regionUniforms,
+      regions: [
+        // x, y, w, h TODO: region type?
+        [200, 100, 40, 40],
+      ],
+    };
+
     var shooterEmitterInfo = {
       x: 0,
       y: 0,
@@ -273,6 +289,7 @@ class LevelInfo {
     info.enemyInfo = enemyInfo;
     info.interactivesInfo = barrelInfo;
     info.wallInfo = wallInfo;
+    info.regionInfo = regionInfo;
     info.shooterInfo = shooterInfo;
 
     info.enemyInitFunction = function (info, game) {
@@ -309,6 +326,19 @@ class LevelInfo {
         var wall = new Wall(info);
         game.entities.push(wall);
         game.walls.push(wall);
+      }
+    };
+
+    info.regionInitFunction = function (info, game) {
+      for (var i = 0; i < info.regions.length; i++) {
+        var d = info.regions[i];
+        info.x = d[0];
+        info.y = d[1];
+        info.w = d[2];
+        info.h = d[3];
+        var region = new Region(info);
+        game.entities.push(region);
+        game.regions.push(region);
       }
     };
 
