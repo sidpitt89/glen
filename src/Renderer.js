@@ -180,6 +180,14 @@ class Renderer {
     this.clearColor = [0.2, 0.4, 0.8, 1];
   }
 
+  getMenuCanvas() {
+    if (!this.menuCanvas) {
+      this.menuCanvas = document.getElementById("menuCanvas");
+    }
+
+    return this.menuCanvas;
+  }
+
   /**
     Called before anything else is rendered.
   **/

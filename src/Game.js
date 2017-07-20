@@ -28,6 +28,14 @@ class Game {
     this.controller = controller;
   }
 
+  setMenu(menu) {
+    this.menu = menu;
+  }
+
+  getMenuCanvas() {
+    return this.renderer.getMenuCanvas();
+  }
+
   initState() {
     this.levelInfo = new LevelInfo(this, this.renderer); // TODO: only used in a few places here. all of which can move to GameController.
   }
@@ -36,6 +44,10 @@ class Game {
     this.currentLevel = level;
     this.currentLevel.load(this);
     this.levelComplete = false;
+
+    if (this.menu && this.enemies) {
+      this.controller.notifyEnemyCountChange(this.enemies.length);
+    }
   }
 
   addListeners() {
@@ -228,11 +240,17 @@ class Game {
         }
       }
     }
-    for (var ei = 0; ei < removedEnemies.length; ei++) {
-      this.enemies.splice(this.enemies.indexOf(removedEnemies[ei]), 1);
-      this.entities.splice(this.entities.indexOf(removedEnemies[ei]), 1);
-    }
 
+    if (removedEnemies.length) {
+      for (var ei = 0; ei < removedEnemies.length; ei++) {
+        this.enemies.splice(this.enemies.indexOf(removedEnemies[ei]), 1);
+        this.entities.splice(this.entities.indexOf(removedEnemies[ei]), 1);
+      }
+
+      if (this.menu) {
+        this.controller.notifyEnemyCountChange(this.enemies.length);
+      }
+    }
     if (this.enemies.length === 0 && !this.levelComplete) {
       this.levelComplete = true;
       this.controller.notifyLevelComplete("test");
@@ -244,6 +262,10 @@ class Game {
 
     for (var i = 0; i < this.entities.length; i++) {
       this.entities[i].render(this.renderer);
+    }
+
+    if (this.menu) {
+      this.menu.render();
     }
 
     this.renderer.finishRender();

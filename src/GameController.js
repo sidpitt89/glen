@@ -3,6 +3,8 @@ class GameController {
     this.game = game;
     this.game.setController(this);
 
+    this.initMenu();
+
     this.levelInfo = new LevelInfo(this.game, this.game.renderer);
     this.addEventListeners();
 
@@ -10,9 +12,18 @@ class GameController {
     this.game.loadLevel(this.currentLevel);
   }
 
+  initMenu() {
+    this.menu = new Menu(this.game);
+    this.enemyCountField = this.menu.createTextField(5, 5, "Enemies Remaining: ");
+  }
+
   addEventListeners() {
     var me = this;
     // TODO
+  }
+
+  notifyEnemyCountChange(count) {
+    this.enemyCountField.updateText(`Enemies Remaining: ${count}`);
   }
 
   notifyLevelComplete(detail) {

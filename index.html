@@ -8,7 +8,10 @@
     <link rel="stylesheet" type="text/css" href="styles/main.css">
   </head>
   <body>
-    <canvas id="canvas" width="600" height="600"></canvas>
+    <div id="rowTop" style="display:flex; flex-direction: row;">
+      <canvas id="canvas" width="600" height="600"></canvas>
+      <canvas id="menuCanvas" width="200" height="600" style="padding-left: 4px;"></canvas>
+    </div>
     <div id="editControls" style="display: none;">
       <button id="wallMode">Wall</button>
       <button id="enemyMode">Enemy</button>
@@ -44,6 +47,8 @@
     <script src="src/displayObjects.js"></script>
     <script src="src/Game.js"></script>
     <script src="src/GameController.js"></script>
+    <script src="src/Menu.js"></script>
+    <script src="src/TextField.js"></script>
     <script src="src/main.js"></script>
   </body>
 </html>
