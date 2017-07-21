@@ -159,6 +159,8 @@ class Game {
     // TODO: Get all this game-specific code out of here!
     this.shooter.shooting = this.shooterShooting;
 
+    this.updateRegions(dT);
+
     for (var i = 0; i < this.entities.length; i++) {
       this.entities[i].update(dT);
     }
@@ -254,6 +256,23 @@ class Game {
     if (this.enemies.length === 0 && !this.levelComplete) {
       this.levelComplete = true;
       this.controller.notifyLevelComplete("test");
+    }
+  }
+
+  updateRegions(dT) {
+    // Check if shooter is within a region
+    var inRegion = false;
+    for (var i = 0; i < this.regions.length; i++) {
+      if (this.regions[i].intersects(this.shooter)) {
+        this.shooter.enterRegion(this.regions[i]);
+        inRegion = true;
+        // For now, assume region effects do not stack, so bail eaerly
+        break;
+      }
+    }
+
+    if (!inRegion) {
+      this.shooter.exitRegion();
     }
   }
 

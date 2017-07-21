@@ -68,7 +68,7 @@ class Emitter extends Entity {
           vZ: 0,
           age: 0,
         };
-        this.particles.push(newParticle);
+        this.addParticle(newParticle);
       }
     }
 
@@ -127,5 +127,9 @@ class Emitter extends Entity {
       // Called just before a particle is drawn. Just in case you want to change
       // the uniforms on a per-particle basis.
       // Example: this.particleUniforms.u_color[3] = Math.min(1, (1 - p.age/100));
+  }
+
+  addParticle(p) {
+    this.particles.push(p);
   }
 }

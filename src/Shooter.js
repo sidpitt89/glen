@@ -17,9 +17,12 @@ class Shooter extends Entity {
     this.forceY = 0;
     this.mass = 1;
     this.drag = 0.01;
+
+    this.currentRegion = null;
   }
 
   update(dT) {
+    this.emitter.boost(this.currentRegion);
     this.emitter.active = this.shooting;
 
     var oldX = this.x;
@@ -106,5 +109,18 @@ class Shooter extends Entity {
     // this.momentumY += (f * y);
     this.vX += x;
     this.vY += y;
+  }
+
+  enterRegion(region) {
+    // Nothing fancy in enter/exit functions now, but keeping it flexible for the future
+    if (this.currentRegion != region) {
+      this.currentRegion = region;
+    }
+  }
+
+  exitRegion() {
+    if (this.currentRegion) {
+      this.currentRegion = null;
+    }
   }
 }
