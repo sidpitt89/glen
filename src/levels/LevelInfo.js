@@ -210,6 +210,23 @@ class LevelInfo {
       movementBounds: [0, this.renderer.gl.canvas.width, this.renderer.gl.canvas.height, 0],
     };
 
+    var seekerInfo = {
+      x: 120,
+      y: 400,
+      z: 0,
+      r: {
+        x: 0, y: 0, z: 0, rZ: 0.001,
+      },
+      w: 12,
+      h: 12,
+      vX: 0.5,
+      game: this.game,
+      health: 5,
+      programInfo: this.renderer.programInfoBasic,
+      bufferInfo: this.renderer.enemyBufferInfo,
+      uniforms: this.renderer.enemyUniforms,
+    };
+
     var barrelInfo = {
       x: 300,
       y: 400,
@@ -291,6 +308,7 @@ class LevelInfo {
     info.wallInfo = wallInfo;
     info.regionInfo = regionInfo;
     info.shooterInfo = shooterInfo;
+    info.seekerInfo = seekerInfo;
 
     info.enemyInitFunction = function (info, game) {
       var ey = 500;
@@ -299,6 +317,20 @@ class LevelInfo {
         for (var ei = 0; ei < 40; ei++) {
           info.x = 14 + (ei * 14);
           var enemy = new Enemy(info);
+          game.entities.push(enemy);
+          game.enemies.push(enemy);
+        }
+        ey -= 30;
+      }
+    };
+
+    info.seekerInitFunction = function (info, game) {
+      var ey = 500;
+      for (var ej = 0; ej < 12; ej++) {
+        info.y = ey;
+        for (var ei = 0; ei < 1; ei++) {
+          info.x = 14 + (ei * 14);
+          var enemy = new Seeker(info);
           game.entities.push(enemy);
           game.enemies.push(enemy);
         }
