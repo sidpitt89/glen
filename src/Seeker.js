@@ -107,14 +107,36 @@ class Seeker extends Entity{
   canSee(tX, tY) {
     var can = true;
     var walls = this.game.walls;
+    var wall;
+    var w2;
+    var h2;
     var p1 = {x: this.x, y: this.y};
     var p2 = {x: tX, y: tY};
     var p3;
     var p4;
     for (var i = 0; i < walls.length; i++) {
-        p3 = {x: walls[i].x, y: walls[i].y + walls[i].h/2};
-        p4 = {x: walls[i].x, y: walls[i].y - walls[i].h/2};
+        // Walls are rectangular, so testing against two intersecting lines from
+        // the corners should be enough.
+        wall = walls[i];
+        w2 = wall.w / 2;
+        h2 = wall.h / 2;
+        p3 = {x: wall.x - w2, y: wall.y + h2};
+        p4 = {x: wall.x + w2, y: wall.y - h2};
         can = can && !this.intersect(p1, p2, p3, p4);
+
+        if (!can)
+        {
+          break;
+        }
+        
+        p3 = {x: wall.x - w2, y: wall.y - h2};
+        p4 = {x: wall.x + w2, y: wall.y + h2};
+        can = can && !this.intersect(p1, p2, p3, p4);
+
+        if (!can)
+        {
+          break;
+        }
     }
 
     return can;
