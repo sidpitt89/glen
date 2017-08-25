@@ -13,6 +13,7 @@ class Seeker extends Entity{
 
     this.umtWait = 5;
     this.waitCount = 0;
+    this.lastSeenLocation = null;
     // this.movementBounds = info.movementBounds || [0, 0, 0, 0]; // Left, right, top, bottom
   }
 
@@ -70,6 +71,19 @@ class Seeker extends Entity{
     var px = this.game.shooter.x;
     var py = this.game.shooter.y;
 
+    if (!this.canSee(px, py)) {
+      if (this.lastSeenLocation != null) {
+        px = this.lastSeenLocation.x;
+        py = this.lastSeenLocation.y;
+      }
+      else {
+        this.vX = 0;
+        this.vY = 0;
+        return;
+      }
+    }
+
+    this.lastSeenLocation = {x: px, y:py};
     var t = Math.atan2(py - this.y, px - this.x);
     this.vX = this.oVx * Math.cos(t);
     this.vY = this.oVy * Math.sin(t);
@@ -88,5 +102,38 @@ class Seeker extends Entity{
       this.health = 0;
       this.dead = true;
     }
+  }
+
+  canSee(tX, tY) {
+    var can = true;
+    var walls = this.game.walls;
+    var p1 = {x: this.x, y: this.y};
+    var p2 = {x: tX, y: tY};
+    var p3;
+    var p4;
+    for (var i = 0; i < walls.length; i++) {
+        p3 = {x: walls[i].x, y: walls[i].y + walls[i].h/2};
+        p4 = {x: walls[i].x, y: walls[i].y - walls[i].h/2};
+        can = can && !this.intersect(p1, p2, p3, p4);
+    }
+
+    return can;
+  }
+
+  // Line Segment Intersection Algorithm --- Move out to util class at some point
+  // http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+  /*
+  def ccw(A,B,C):
+    return (C.y-A.y)*(B.x-A.x) > (B.y-A.y)*(C.x-A.x)
+
+  def intersect(A,B,C,D):
+      return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
+  */
+  ccw(a, b, c) {
+    return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x);
+  }
+
+  intersect(a, b, c, d) {
+    return (this.ccw(a, c, d) != this.ccw(b, c, d)) && (this.ccw(a, b, c) != this.ccw(a, b, d));
   }
 }
