@@ -9,8 +9,16 @@
   </head>
   <body>
     <div id="rowTop" style="display:flex; flex-direction: row;">
-      <canvas id="canvas" width="600" height="600"></canvas>
+      <div id="cancan" style="position:relative;">
+        <canvas id="canvas" width="600" height="600" style="position:absolute;top:0;left:0;"></canvas>
+        <canvas id="qtTestCanvas" width="600" height="600" style="position:absolute;top:0;left:0;"></canvas>
+      </div>
+
       <canvas id="menuCanvas" width="200" height="600" style="padding-left: 4px;"></canvas>
+    </div>
+
+    <div id="qtTest">
+        <button id="qtToggle">Toggle QT</button>
     </div>
     <div id="editControls" style="display: none;">
       <button id="wallMode">Wall</button>
@@ -44,6 +52,8 @@
     <script src="src/Region.js"></script>
     <script src="src/levels/Level.js"></script>
     <script src="src/levels/LevelInfo.js"></script>
+
+    <script src="src/quadtree/QuadTree.js"></script>
 
     <script src="src/displayObjects.js"></script>
     <script src="src/Game.js"></script>

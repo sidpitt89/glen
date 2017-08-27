@@ -1,6 +1,6 @@
 class QuadTree {
   constructor(bounds, maxDepth, maxChildren) {
-    this.root = new QTNode(bounds, 0, maxDepth, children);
+    this.root = new QTNode(bounds, 0, maxDepth, maxChildren);
   }
 
   insert(item, isArray) {
@@ -21,6 +21,58 @@ class QuadTree {
   retrieve(item) {
     return this.root.retrieve(item);
   }
+
+  retrieveInBounds(bounds) {
+    var treeResult = this.root.retrieveInBounds(bounds);
+    var filteredResult = [];
+
+    for (var i = 0; i < treeResult.length; i++) {
+      var node = treeResult[i];
+
+      if (this.areBoundsOverlapping(node, bounds)) {
+        filteredResult.push(node);
+      }
+    }
+
+    return filteredResult;
+  }
+
+  areBoundsOverlapping(ba, bb) {
+    // return !(b1.x > (b2.x + b2.w) || b2.x > (b1.x + b1.w) || b1.y > (b2.y + b2.h) || b2.y > (b1.y + b1.h));
+    var b1 = this.offsetBounds(ba);
+    var b2 = this.offsetBounds(bb);
+    return (b1.x <= (b2.x + b2.w) && b2.x <= (b1.x + b1.w) && b1.y <= (b2.y + b2.h) && b2.y <= (b1.y + b1.h));
+  }
+
+  offsetBounds(b) {
+    // Convert (x, y)-as-center bounds to (x, y)-as-corner bounds
+    return {
+      x : b.x - (b.w / 2),
+      y : b.y - (b.h / 2),
+      w : b.w,
+      h : b.h
+    };
+  }
+
+  render() {
+    if (this.rendered) {
+      return;
+    }
+
+    if (!this.canvas) {
+      this.canvas = document.getElementById("qtTestCanvas");
+      this.ctx = this.canvas.getContext("2d");
+    }
+
+    this.ctx.clearRect(0, 0, this.root.bounds.w, this.root.bounds.h);
+    this.ctx.lineWidth = "2";
+    this.ctx.strokeStyle = "#000000";
+    this.ctx.beginPath();
+    this.root.render(this.ctx);
+    this.ctx.stroke();
+
+    this.rendered = true;
+  }
 }
 
 class QTNode {
@@ -37,10 +89,29 @@ class QTNode {
     this.holder = [];
 
     // Node indices
-    this.TLI = 0;
-    this.TRI = 1;
-    this.BLI = 2;
-    this.BRI = 3;
+    this.BLI = 0;
+    this.BRI = 1;
+    this.TLI = 2;
+    this.TRI = 3;
+  }
+
+  render(ctx) {
+    ctx.rect(this.bounds.x, 600 - this.bounds.y, this.bounds.w, -this.bounds.h);
+    if (this.nodes.length) {
+      for (var i = 0; i < this.nodes.length; i++) {
+        this.nodes[i].render(ctx);
+      }
+    }
+  }
+
+  offsetBounds(b) {
+    // Convert (x, y)-as-center bounds to (x, y)-as-corner bounds
+    return {
+      x : b.x - (b.w / 2),
+      y : b.y - (b.h / 2),
+      w : b.w,
+      h : b.h
+    };
   }
 
   inBounds(o, nb) {
@@ -52,7 +123,7 @@ class QTNode {
     if (this.nodes.length) {
       var index = this.findIndex(o);
       var node = this.nodes[index];
-      if (this.inBounds(o, node.bounds)) {
+      if (this.inBounds(this.offsetBounds(o), node.bounds)) {
         node.insert(o);
       }
       else {
@@ -73,10 +144,11 @@ class QTNode {
     }
   }
 
-  findIndex(o) {
+  findIndex(obj) {
     var b = this.bounds;
+    var o = this.offsetBounds(obj);
     var left = o.x <= b.x + (b.w / 2);
-    var top = o.y <= b.y + (b.h / 2);
+    var top = o.y >= b.y + (b.h / 2);
 
     var i = this.TLI;
     if (left) {
@@ -103,13 +175,21 @@ class QTNode {
     var bwh = this.bounds.w / 2;
     var bhh = this.bounds.h / 2;
 
-    this.nodes[this.TLI] = new Node({x : bx , y : by, w : bwh, h: bhh}, depth, this.maxDepth, this.maxChildren);
-    this.nodes[this.TRI] = new Node({x : bx + bwh, y : by, w : bwh, h: bhh}, depth, this.maxDepth, this.maxChildren);
-    this.nodes[this.BLI] = new Node({x : bx, y : by + bhh, w : bwh, h: bhh}, depth, this.maxDepth, this.maxChildren);
-    this.nodes[this.BRI] = new Node({x : bx + bwh, y : by + bhh, w : bwh, h: bhh}, depth, this.maxDepth, this.maxChildren);
+    this.nodes[this.BLI] = new QTNode({x : bx , y : by, w : bwh, h: bhh}, depth, this.maxDepth, this.maxChildren);
+    this.nodes[this.BRI] = new QTNode({x : bx + bwh, y : by, w : bwh, h: bhh}, depth, this.maxDepth, this.maxChildren);
+    this.nodes[this.TLI] = new QTNode({x : bx, y : by + bhh, w : bwh, h: bhh}, depth, this.maxDepth, this.maxChildren);
+    this.nodes[this.TRI] = new QTNode({x : bx + bwh, y : by + bhh, w : bwh, h: bhh}, depth, this.maxDepth, this.maxChildren);
   }
   getChildren() {
     return this.children.concat(this.stuckChildren);
+  }
+
+  inRange(x, l, u) {
+    return (x >= l && x <= u);
+  }
+
+  areBoundsOverlapping(b1, b2) {
+    return (b1.x <= (b2.x + b2.w) && b2.x <= (b1.x + b1.w) && b1.y <= (b2.y + b2.h) && b2.y <= (b1.y + b1.h));
   }
 
   retrieve(o) {
@@ -128,23 +208,37 @@ class QTNode {
 
         // TODO: my y-coordinates are probably reversed here.
         // TODO: also, my (x, y) represents the center of an object, so that probably needs to be addressed as well.
-        if (o.x <= this.nodes[this.TRI].bounds.x) {
-          if (o.y <= this.nodes[this.BLI].bounds.y) {
-            this.holder.push.apply(this.holder, this.nodes[this.TLI].getAllContent());
-          }
-          if (o.y + o.h > this.nodes[this.BLI].bounds.y) {
-            this.holder.push.apply(this.holder, this.nodes[this.BLI].getAllContent());
-          }
+        var ob = this.offsetBounds(o);
+        if (this.areBoundsOverlapping(ob, this.nodes[this.TRI].bounds)) {
+          this.holder.push.apply(this.holder, this.nodes[this.TRI].getAllContent());
+        }
+        if (this.areBoundsOverlapping(ob, this.nodes[this.TLI].bounds)) {
+          this.holder.push.apply(this.holder, this.nodes[this.TLI].getAllContent());
+        }
+        if (this.areBoundsOverlapping(ob, this.nodes[this.BRI].bounds)) {
+          this.holder.push.apply(this.holder, this.nodes[this.BRI].getAllContent());
+        }
+        if (this.areBoundsOverlapping(ob, this.nodes[this.BLI].bounds)) {
+          this.holder.push.apply(this.holder, this.nodes[this.BLI].getAllContent());
         }
 
-        if (o.x + o.w > this.nodes[this.TRI].bounds.x) {
-          if (o.y <= this.nodes[this.BRI].bounds.y) {
-            this.holder.push.apply(this.holder, this.nodes[this.TRI].getAllContent());
-          }
-          if (o.y + o.h > this.nodes[this.BRI].bounds.y) {
-            this.holder.push.apply(this.holder, this.nodes[this.BRI].getAllContent());
-          }
-        }
+        // if (o.x <= this.nodes[this.TRI].bounds.x) {
+        //   if (o.y >= this.nodes[this.BLI].bounds.y) {
+        //     this.holder.push.apply(this.holder, this.nodes[this.TLI].getAllContent());
+        //   }
+        //   if (o.y - o.h < this.nodes[this.BLI].bounds.y) {
+        //     this.holder.push.apply(this.holder, this.nodes[this.BLI].getAllContent());
+        //   }
+        // }
+        //
+        // if (o.x + o.w > this.nodes[this.TRI].bounds.x) {
+        //   if (o.y >= this.nodes[this.BRI].bounds.y) {
+        //     this.holder.push.apply(this.holder, this.nodes[this.TRI].getAllContent());
+        //   }
+        //   if (o.y - o.h < this.nodes[this.BRI].bounds.y) {
+        //     this.holder.push.apply(this.holder, this.nodes[this.BRI].getAllContent());
+        //   }
+        // }
       }
     }
 
@@ -153,6 +247,45 @@ class QTNode {
 
     return this.holder;
   }
+
+  retrieveInBounds(bounds) {
+    var result = [];
+    var ob = this.offsetBounds(bounds);
+    if (this.areBoundsOverlapping(ob, this.bounds)) {
+      result = result.concat(this.stuckChildren);
+
+      if (this.children.length) {
+        result = result.concat(this.children);
+      }
+      else if (this.nodes.length) {
+        for (var i = 0; i < this.nodes.length; i++) {
+          result = result.concat(this.nodes[i].retrieveInBounds(bounds));
+        }
+      }
+    }
+
+    // if (this.collidesWith(bounds)) {
+    //   result = result.concat(this.stuckChildren);
+    //
+    //   if (this.children.length) {
+    //     result = result.concat(this.children);
+    //   }
+    //   else if (this.nodes.length) {
+    //     for (var i = 0; i < this.nodes.length; i++) {
+    //       result = result.concat(this.nodes[i].retrieveInBounds(bounds));
+    //     }
+    //   }
+    // }
+
+    return result;
+  }
+
+  // collidesWith(bounds) {
+  //   var b1 = this.bounds;
+  //   var b2 = bounds;
+  //
+  //   return !(b1.x > (b2.x + b2.w) || b2.x > (b1.x + b1.w) || b1.y > (b2.y + b2.h) || b2.y > (b1.y + b1.h));
+  // }
 
   getAllContent() {
     var c = [];

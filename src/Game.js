@@ -22,6 +22,8 @@ class Game {
 
     this.initState();
     this.addListeners();
+
+    this.paused = false;
   }
 
   setController(controller) {
@@ -150,7 +152,30 @@ class Game {
     this.shooter.updateAim(x, y);
   }
 
+  pause() {
+    this.paused = !this.paused;
+  }
+
+  toggleQt(on) {
+    this.qtOn = on;
+    this.pause();
+    if (this.qtOn) {
+      this.quad = new QuadTree({
+        x: 0, y:0, w: this.renderer.canvas.width, h: this.renderer.canvas.height
+      }, 6, 4);
+
+      this.quad.insert(this.entities, true);
+    }
+    else {
+      this.quad.clear();
+      this.quad = null;
+    }
+  }
+
   update(dT) {
+    if (this.paused) {
+      return;
+    }
     // This is a hacky little way to allow WASD to move the shooter.
     // Once it stops flying off-screen, it shouldn't be necessary.
     this.shooter.x += this.shooterMovementX;
@@ -288,6 +313,10 @@ class Game {
     }
 
     this.renderer.finishRender();
+
+    if (this.qtOn) {
+      this.quad.render();
+    }
   }
 
   registerProjectileSource(ps) {
