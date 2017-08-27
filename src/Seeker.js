@@ -128,7 +128,7 @@ class Seeker extends Entity{
         {
           break;
         }
-        
+
         p3 = {x: wall.x - w2, y: wall.y - h2};
         p4 = {x: wall.x + w2, y: wall.y + h2};
         can = can && !this.intersect(p1, p2, p3, p4);
@@ -142,6 +142,10 @@ class Seeker extends Entity{
     return can;
   }
 
+  // TODO: I don't think this math is 100% sound, after looking into it a little more.
+  // TODO: It just happens to work most of the time.
+  // TODO: Look into using cross products as a way to solve the ccw problem.
+  // TODO: They might end up doing the same math, but it would be good to make sure.
   // Line Segment Intersection Algorithm --- Move out to util class at some point
   // http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
   /*
