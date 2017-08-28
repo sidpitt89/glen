@@ -40,6 +40,9 @@ class Game {
 
   initState() {
     this.levelInfo = new LevelInfo(this, this.renderer); // TODO: only used in a few places here. all of which can move to GameController.
+    this.soundManager = new SoundManager();
+
+    this.soundManager.addSound("assets/sounds/shoot2.wav", "shoot");
   }
 
   loadLevel(level) {

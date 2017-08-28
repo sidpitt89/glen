@@ -33,6 +33,7 @@ class ShooterEmitter extends Emitter {
     if (this.boosted) {
       p.boosted = true;
     }
+    this.game.soundManager.play("shoot");
     super.addParticle(p);
   }
 
