@@ -206,8 +206,6 @@ class QTNode {
         //Part of the item overlaps multiple child nodes.
         //For each of the overlapping nodes, return all containing objects.
 
-        // TODO: my y-coordinates are probably reversed here.
-        // TODO: also, my (x, y) represents the center of an object, so that probably needs to be addressed as well.
         var ob = this.offsetBounds(o);
         if (this.areBoundsOverlapping(ob, this.nodes[this.TRI].bounds)) {
           this.holder.push.apply(this.holder, this.nodes[this.TRI].getAllContent());
@@ -222,23 +220,6 @@ class QTNode {
           this.holder.push.apply(this.holder, this.nodes[this.BLI].getAllContent());
         }
 
-        // if (o.x <= this.nodes[this.TRI].bounds.x) {
-        //   if (o.y >= this.nodes[this.BLI].bounds.y) {
-        //     this.holder.push.apply(this.holder, this.nodes[this.TLI].getAllContent());
-        //   }
-        //   if (o.y - o.h < this.nodes[this.BLI].bounds.y) {
-        //     this.holder.push.apply(this.holder, this.nodes[this.BLI].getAllContent());
-        //   }
-        // }
-        //
-        // if (o.x + o.w > this.nodes[this.TRI].bounds.x) {
-        //   if (o.y >= this.nodes[this.BRI].bounds.y) {
-        //     this.holder.push.apply(this.holder, this.nodes[this.TRI].getAllContent());
-        //   }
-        //   if (o.y - o.h < this.nodes[this.BRI].bounds.y) {
-        //     this.holder.push.apply(this.holder, this.nodes[this.BRI].getAllContent());
-        //   }
-        // }
       }
     }
 
@@ -264,28 +245,8 @@ class QTNode {
       }
     }
 
-    // if (this.collidesWith(bounds)) {
-    //   result = result.concat(this.stuckChildren);
-    //
-    //   if (this.children.length) {
-    //     result = result.concat(this.children);
-    //   }
-    //   else if (this.nodes.length) {
-    //     for (var i = 0; i < this.nodes.length; i++) {
-    //       result = result.concat(this.nodes[i].retrieveInBounds(bounds));
-    //     }
-    //   }
-    // }
-
     return result;
   }
-
-  // collidesWith(bounds) {
-  //   var b1 = this.bounds;
-  //   var b2 = bounds;
-  //
-  //   return !(b1.x > (b2.x + b2.w) || b2.x > (b1.x + b1.w) || b1.y > (b2.y + b2.h) || b2.y > (b1.y + b1.h));
-  // }
 
   getAllContent() {
     var c = [];
