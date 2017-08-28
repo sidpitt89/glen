@@ -55,9 +55,9 @@ class QuadTree {
   }
 
   render() {
-    if (this.rendered) {
-      return;
-    }
+    // if (this.rendered) {
+    //   return;
+    // }
 
     if (!this.canvas) {
       this.canvas = document.getElementById("qtTestCanvas");

@@ -158,13 +158,11 @@ class Game {
 
   toggleQt(on) {
     this.qtOn = on;
-    this.pause();
+    // this.pause();
     if (this.qtOn) {
       this.quad = new QuadTree({
         x: 0, y:0, w: this.renderer.canvas.width, h: this.renderer.canvas.height
       }, 6, 4);
-
-      this.quad.insert(this.entities, true);
     }
     else {
       this.quad.clear();
@@ -278,6 +276,12 @@ class Game {
         this.controller.notifyEnemyCountChange(this.enemies.length);
       }
     }
+
+    if (this.qtOn) {
+      this.quad.clear();
+      this.quad.insert(this.entities, true);
+    }
+
     if (this.enemies.length === 0 && !this.levelComplete) {
       this.levelComplete = true;
       this.controller.notifyLevelComplete("test");
