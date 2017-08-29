@@ -25,6 +25,8 @@ class Entity {
 
     // Required / No Defaults
     this.game = info.game;
+
+    this.drawObject = null;
   }
 
   update(dT) {

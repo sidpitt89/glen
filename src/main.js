@@ -1,6 +1,10 @@
 (function() {
   "use strict";
 
+  // ------ webgl profiler -------------
+  // var spector = new SPECTOR.Spector();
+  // spector.displayUI();
+  // -----------------------------------
   var game = new Game();
   var controller = new GameController(game);
 

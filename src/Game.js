@@ -46,6 +46,8 @@ class Game {
   }
 
   loadLevel(level) {
+    this.renderer.resetDrawObjects();
+
     this.currentLevel = level;
     this.currentLevel.load(this);
     this.levelComplete = false;
@@ -273,6 +275,7 @@ class Game {
       for (var ei = 0; ei < removedEnemies.length; ei++) {
         this.enemies.splice(this.enemies.indexOf(removedEnemies[ei]), 1);
         this.entities.splice(this.entities.indexOf(removedEnemies[ei]), 1);
+        this.renderer.removeDrawObject(removedEnemies[ei].drawObject, "enemy");
       }
 
       if (this.menu) {
@@ -319,6 +322,7 @@ class Game {
       this.menu.render();
     }
 
+    this.renderer.renderObjectLists();
     this.renderer.finishRender();
 
     if (this.qtOn) {

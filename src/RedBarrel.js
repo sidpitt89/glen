@@ -37,10 +37,10 @@ class RedBarrel extends Enemy{
 
   setEntityUniforms() {
     if (this.exploding) {
-      this.uniforms.u_color[3] = 1.0;
+      this.drawObject.uniforms.u_color[3] = 1.0;
     }
     else {
-      this.uniforms.u_color[3] = 0.5 + (0.1 * this.health);
+      this.drawObject.uniforms.u_color[3] = 0.5 + (0.1 * this.health);
     }
   }
 

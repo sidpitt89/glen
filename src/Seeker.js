@@ -14,6 +14,7 @@ class Seeker extends Entity{
     this.umtWait = 5;
     this.waitCount = 0;
     this.lastSeenLocation = null;
+    this.createDrawObject(this.game.renderer);
     // this.movementBounds = info.movementBounds || [0, 0, 0, 0]; // Left, right, top, bottom
   }
 
@@ -53,9 +54,9 @@ class Seeker extends Entity{
 
   render(r) {
     this.setEntityUniforms();
-    twgl.setBuffersAndAttributes(r.gl, this.programInfo, this.bufferInfo);
+    // twgl.setBuffersAndAttributes(r.gl, this.programInfo, this.bufferInfo);
 
-    var m = this.uniforms.u_matrix;
+    var m = this.drawObject.uniforms.u_matrix;
 
     // Convert to screen coordinate space, translate and scale
     r.m4.ortho(0, r.gl.canvas.width, 0, r.gl.canvas.height, -1, 1, m);
@@ -63,8 +64,8 @@ class Seeker extends Entity{
     r.m4.rotateZ(m, this.rZ, m);
     r.m4.scale(m, [this.scaleW, this.scaleH, 1], m);
 
-    twgl.setUniforms(this.programInfo, this.uniforms);
-    twgl.drawBufferInfo(r.gl, this.bufferInfo, r.gl.TRIANGLE_STRIP);
+    // twgl.setUniforms(this.programInfo, this.uniforms);
+    // twgl.drawBufferInfo(r.gl, this.bufferInfo, r.gl.TRIANGLE_STRIP);
   }
 
   updateMovementTarget() {
@@ -90,7 +91,7 @@ class Seeker extends Entity{
   }
 
   setEntityUniforms() {
-    this.uniforms.u_color[3] = 0.5 + (0.1 * this.health);
+    this.drawObject.uniforms.u_color[3] = 0.5 + (0.1 * this.health);
   }
 
   takeDamage(amt) {
@@ -102,6 +103,19 @@ class Seeker extends Entity{
       this.health = 0;
       this.dead = true;
     }
+  }
+
+  createDrawObject(r) {
+    this.drawObject = {
+      programInfo: this.programInfo,
+      bufferInfo: this.bufferInfo,
+      uniforms: {
+        u_matrix: r.m4.identity(),
+        u_color: [0.9, 0.5, 0.7, 1.0],
+      },
+      type: r.gl.TRIANGLE_STRIP
+    };
+    this.game.renderer.registerDrawObject(this.drawObject, "enemy");
   }
 
   canSee(tX, tY) {

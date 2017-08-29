@@ -178,6 +178,8 @@ class Renderer {
 
     // Background color -- Does this affect anything beyond that?
     this.clearColor = [0.2, 0.4, 0.8, 1];
+
+    this.drawObjectsLists = {};
   }
 
   getMenuCanvas() {
@@ -233,5 +235,26 @@ class Renderer {
   **/
   finishRender() {
     // Not sure if this will be needed ever, but it's good to have around
+  }
+
+  renderObjectLists() {
+    for (var k in this.drawObjectsLists) {
+      twgl.drawObjectList(this.gl, this.drawObjectsLists[k]);
+    }
+  }
+
+  registerDrawObject(d, key) {
+    if (!this.drawObjectsLists[key]) {
+      this.drawObjectsLists[key] = [];
+    }
+    this.drawObjectsLists[key].push(d);
+  }
+
+  removeDrawObject(d, key) {
+    this.drawObjectsLists[key].splice(this.drawObjectsLists[key].indexOf(d), 1);
+  }
+
+  resetDrawObjects() {
+    this.drawObjectsLists = {};
   }
 }
