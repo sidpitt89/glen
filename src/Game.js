@@ -196,7 +196,6 @@ class Game {
     var removedProjectiles = [];
     var removedEnemies = [];
 
-    // TODO: There's a bug with explosions occasionally removing the shooter.
     // TODO: Also all this logic should go somewhere else. ???
     for (var p = 0; p < this.projectileSources.length; p++) {
       var ps = this.projectileSources[p];
@@ -273,8 +272,16 @@ class Game {
 
     if (removedEnemies.length) {
       for (var ei = 0; ei < removedEnemies.length; ei++) {
-        this.enemies.splice(this.enemies.indexOf(removedEnemies[ei]), 1);
-        this.entities.splice(this.entities.indexOf(removedEnemies[ei]), 1);
+        var idx = this.enemies.indexOf(removedEnemies[ei]);
+        if (idx >= 0) {
+          this.enemies.splice(idx, 1);
+        }
+
+        idx = this.entities.indexOf(removedEnemies[ei]);
+        if (idx >= 0) {
+          this.entities.splice(idx, 1);
+        }
+
         this.renderer.removeDrawObject(removedEnemies[ei].drawObject, "enemy");
       }
 

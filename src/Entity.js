@@ -64,6 +64,10 @@ class Entity {
             entity.y + entity.h / 2 >= (this.y - this.h / 2));
   }
 
+  debugPoke() {
+    // NOTE: Just a helpful function for debugging. Remove calls to it when done!
+  }
+
   // distanceTo(entity) {
   //   return Math.sqrt(Math.pow(this.x - entity.x, 2) + Math.pow(this.y - entity.y, 2));
   // }
