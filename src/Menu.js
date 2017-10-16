@@ -1,9 +1,6 @@
 class Menu {
-  constructor(game) {
-    this.game = game;
-
-    this.game.setMenu(this);
-    this.canvas = game.getMenuCanvas();
+  constructor(gameController) {
+    this.canvas = gameController.getMenuCanvas();
 
     this.ctx = this.canvas.getContext("2d");
 
@@ -19,7 +16,7 @@ class Menu {
     this.menuItems.push(tf);
 
     this.notifyChange(tf);
-  
+
     return tf;
   }
 

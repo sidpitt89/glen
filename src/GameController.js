@@ -13,8 +13,12 @@ class GameController {
   }
 
   initMenu() {
-    this.menu = new Menu(this.game);
+    this.menu = new Menu(this);
     this.enemyCountField = this.menu.createTextField(5, 5, "Enemies Remaining: ");
+  }
+
+  getMenuCanvas() {
+    return this.game.renderer.getMenuCanvas();
   }
 
   addEventListeners() {
@@ -26,6 +30,11 @@ class GameController {
     document.getElementById("qtToggle").addEventListener("click", function(e) {
       me.toggleQt();
     });
+  }
+
+  render() {
+    this.game.render();
+    this.menu.render();
   }
 
   toggleQt() {

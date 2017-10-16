@@ -30,14 +30,6 @@ class Game {
     this.controller = controller;
   }
 
-  setMenu(menu) {
-    this.menu = menu;
-  }
-
-  getMenuCanvas() {
-    return this.renderer.getMenuCanvas();
-  }
-
   initState() {
     this.levelInfo = new LevelInfo(this, this.renderer); // TODO: only used in a few places here. all of which can move to GameController.
     this.soundManager = new SoundManager();
@@ -52,7 +44,7 @@ class Game {
     this.currentLevel.load(this);
     this.levelComplete = false;
 
-    if (this.menu && this.enemies) {
+    if (this.enemies) {
       this.controller.notifyEnemyCountChange(this.enemies.length);
     }
   }
@@ -285,9 +277,7 @@ class Game {
         this.renderer.removeDrawObject(removedEnemies[ei].drawObject, "enemy");
       }
 
-      if (this.menu) {
-        this.controller.notifyEnemyCountChange(this.enemies.length);
-      }
+      this.controller.notifyEnemyCountChange(this.enemies.length);
     }
 
     if (this.qtOn) {
@@ -318,15 +308,11 @@ class Game {
     }
   }
 
-  render(dT) {
+  render() {
     this.renderer.startRender();
 
     for (var i = 0; i < this.entities.length; i++) {
       this.entities[i].render(this.renderer);
-    }
-
-    if (this.menu) {
-      this.menu.render();
     }
 
     this.renderer.renderObjectLists();

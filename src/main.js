@@ -13,6 +13,9 @@
       requestAnimationFrame(loop);
       return;
     }
+
+    // TODO: Consider moving dT and lastFrameTimeMs to GameController,
+    // TODO:   as well as running all updates and rendering through GameController.
     game.dT += (time - game.lastFrameTimeMs);
     game.lastFrameTimeMs = time;
 
@@ -28,7 +31,8 @@
         game.dT = 0;
       }
     }
-    game.render(game.dT);
+
+    controller.render();
 
     requestAnimationFrame(loop);
   }
