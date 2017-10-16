@@ -21,13 +21,19 @@ class Game {
     this.regions = [];
 
     this.initState();
-    this.addListeners();
+    // this.addListeners();
 
     this.paused = false;
   }
 
+  startGame(l) {
+    this.addListeners();
+    this.loadLevel(l);
+  }
+
   setController(controller) {
     this.controller = controller;
+    this.stateManager = this.controller.getStateManager();
   }
 
   initState() {
@@ -169,8 +175,15 @@ class Game {
 
   update(dT) {
     if (this.paused) {
+      // TODO: Use stateManager instead?
       return;
     }
+
+    if (this.stateManager.isTitle()) {
+      this.updateTitle(dT);
+      return;
+    }
+
     // This is a hacky little way to allow WASD to move the shooter.
     // Once it stops flying off-screen, it shouldn't be necessary.
     this.shooter.x += this.shooterMovementX;
@@ -308,7 +321,20 @@ class Game {
     }
   }
 
+  updateTitle(dT) {
+    if (!this.titleScreen) {
+      this.titleScreen = new TitleScreen(this);
+    }
+
+    this.titleScreen.update(dT);
+  }
+
   render() {
+    if (this.stateManager.isTitle()) {
+      this.renderTitle();
+      return;
+    }
+
     this.renderer.startRender();
 
     for (var i = 0; i < this.entities.length; i++) {
@@ -321,6 +347,12 @@ class Game {
     if (this.qtOn) {
       this.quad.render();
     }
+  }
+
+  renderTitle() {
+    this.renderer.startRender();
+    this.titleScreen.render(this.renderer);
+    this.renderer.finishRender();
   }
 
   registerProjectileSource(ps) {

@@ -1,6 +1,8 @@
 class Menu {
   constructor(gameController) {
     this.canvas = gameController.getMenuCanvas();
+    this.stateManager = gameController.getStateManager();
+    this.controller = gameController;
 
     this.ctx = this.canvas.getContext("2d");
 
@@ -9,6 +11,26 @@ class Menu {
 
     this.menuItems = [];
     this.dirtyItems = [];
+
+    this.addListeners();
+  }
+
+  addListeners() {
+    var me = this;
+    // this.canvas.addEventListener("mouseenter", this.mouseEnterHandler);
+    this.canvas.addEventListener("mousedown", function(event) {
+      me.mouseDownHandler(event);
+    });
+  }
+
+  mouseEnterHandler(event) {
+
+  }
+
+  mouseDownHandler(event) {
+    if (this.stateManager.isTitle()) {
+      this.controller.notifyMenuClicked();
+    }
   }
 
   createTextField(x, y, text) {

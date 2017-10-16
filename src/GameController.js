@@ -1,15 +1,17 @@
 class GameController {
   constructor(game) {
+    this.stateManager = new StateManager();
+
     this.game = game;
     this.game.setController(this);
 
+    this.levelInfo = new LevelInfo(this.game, this.game.renderer);
     this.initMenu();
 
-    this.levelInfo = new LevelInfo(this.game, this.game.renderer);
     this.addEventListeners();
 
     this.currentLevel = new Level(this.levelInfo.levels[1]);
-    this.game.loadLevel(this.currentLevel);
+    // this.game.loadLevel(this.currentLevel);
   }
 
   initMenu() {
@@ -19,6 +21,10 @@ class GameController {
 
   getMenuCanvas() {
     return this.game.renderer.getMenuCanvas();
+  }
+
+  getStateManager() {
+    return this.stateManager;
   }
 
   addEventListeners() {
@@ -55,5 +61,11 @@ class GameController {
 
   notifyLevelIncomplete(detail) {
 
+  }
+
+  notifyMenuClicked() {
+    this.stateManager.setState(this.stateManager.STATE_PLAYING);
+
+    this.game.startGame(this.currentLevel);
   }
 }
