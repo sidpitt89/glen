@@ -13,6 +13,7 @@ class Menu {
     this.dirtyItems = [];
 
     this.addListeners();
+    this.addButtons();
   }
 
   addListeners() {
@@ -23,13 +24,33 @@ class Menu {
     });
   }
 
+  addButtons() {
+    this.buttons = [];
+    var me = this;
+    var b = new MenuButton(20, 300, 60, 60, "Test", function() {
+      me.buttonClickTest();
+    });
+
+    this.buttons.push(b);
+  }
+
   mouseEnterHandler(event) {
 
   }
 
+  buttonClickTest() {
+    this.controller.notifyMenuClicked();
+  }
+
   mouseDownHandler(event) {
     if (this.stateManager.isTitle()) {
-      this.controller.notifyMenuClicked();
+      // TODO: Find better way to get local canvas coordinates. 
+      var mx = event.pageX - this.canvas.offsetLeft - 8;
+      var my = event.pageY - this.canvas.offsetTop;
+
+      for (var i = 0; i < this.buttons.length; i++) {
+        this.buttons[i].handleMouseDown(mx, my);
+      }
     }
   }
 
@@ -60,6 +81,10 @@ class Menu {
 
       while (this.dirtyItems.length) {
         this.dirtyItems.shift().render(this.ctx);
+      }
+
+      for (var i = 0; i < this.buttons.length; i++) {
+        this.buttons[i].render(this.ctx);
       }
     }
   }
