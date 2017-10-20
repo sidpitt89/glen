@@ -17,7 +17,7 @@ class TextField {
     this.text = text;
     this.needsUpdate = true;
 
-    this.parent.notifyChange(this);
+    this.parent.dirty();
   }
 
   update(ctx) {

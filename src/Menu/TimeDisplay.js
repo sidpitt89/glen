@@ -60,7 +60,7 @@ class TimeDisplay {
 
     this.time = Math.round(this.time * 100) / 100;
 
-    this.parent.notifyChange(this);
+    this.parent.dirty();
   }
 
   render(ctx) {
@@ -73,7 +73,7 @@ class TimeDisplay {
     ctx.font = this.font;
     var t = ctx.measureText(this.text);
     this.textWidth = Math.ceil(t.width) + 2;
-    
+
     ctx.fillStyle = this.fontColor;
     ctx.textAlign = "center";
     ctx.textBaseAlign = "middle";

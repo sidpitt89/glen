@@ -10,36 +10,20 @@ class Menu {
     this.height = this.canvas.height;
 
     this.menuItems = [];
-    this.dirtyItems = [];
+    this.buttons = [];
+
+    this._dirty = true;
 
     this.addListeners();
-    this.addButtons();
   }
 
   addListeners() {
-    var me = this;
     // this.canvas.addEventListener("mouseenter", this.mouseEnterHandler);
-    this.canvas.addEventListener("mousedown", function(event) {
-      me.mouseDownHandler(event);
-    });
-  }
-
-  addButtons() {
-    this.buttons = [];
-    var me = this;
-    var b = new MenuButton(20, 300, 60, 60, "Test", function() {
-      me.buttonClickTest();
-    });
-
-    this.buttons.push(b);
+    this.canvas.addEventListener("mousedown", event => this.mouseDownHandler(event));
   }
 
   mouseEnterHandler(event) {
 
-  }
-
-  buttonClickTest() {
-    this.controller.notifyMenuClicked();
   }
 
   mouseDownHandler(event) {
@@ -54,11 +38,28 @@ class Menu {
     }
   }
 
+  createButton(x, y, w, h, text, clickHandler) {
+    var mb = new MenuButton(x, y, w, h, text, clickHandler);
+    this.buttons.push(mb);
+
+    this.dirty();
+
+    return mb;
+  }
+
+  removeButton(button) {
+    var idx = this.buttons.indexOf(button);
+    if (idx >= 0) {
+      this.buttons.splice(idx, 1);
+      this.dirty();
+    }
+  }
+
   createTextField(x, y, text) {
     var tf = new TextField(x, y, text, this);
     this.menuItems.push(tf);
 
-    this.notifyChange(tf);
+    this.dirty();
 
     return tf;
   }
@@ -67,11 +68,13 @@ class Menu {
     var td = new TimeDisplay(x, y, w, h, this);
     this.menuItems.push(td);
 
+    this.dirty();
+
     return td;
   }
 
-  notifyChange(tf) {
-    this.dirtyItems.push(tf);
+  dirty() {
+    this._dirty = true;
   }
 
   update() {
@@ -82,13 +85,9 @@ class Menu {
   }
 
   render() {
-    if (this.dirtyItems.length) {
+    if (this._dirty) {
       this.ctx.fillStyle = "#999999";
       this.ctx.fillRect(0, 0, this.width, this.height);
-
-      // while (this.dirtyItems.length) {
-      //   this.dirtyItems.shift().render(this.ctx);
-      // }
 
       var i;
       for (i = 0; i < this.menuItems.length; i++) {
@@ -99,7 +98,7 @@ class Menu {
         this.buttons[i].render(this.ctx);
       }
 
-      this.dirtyItems = [];
+      this._dirty = false;
     }
   }
 }

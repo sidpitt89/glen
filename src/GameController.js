@@ -16,9 +16,7 @@ class GameController {
 
   initMenu() {
     this.menu = new Menu(this);
-    this.enemyCountField = this.menu.createTextField(5, 5, "Enemies Remaining: ");
-
-    this.gameTimer = this.menu.createTimeDisplay(40, 40, 100, 80);
+    this.startButton = this.menu.createButton(10, 10, 180, 60, "Start!", () => this.startButtonClicked());
   }
 
   getMenuCanvas() {
@@ -63,6 +61,15 @@ class GameController {
 
   notifyLevelIncomplete(detail) {
 
+  }
+
+  startButtonClicked() {
+    this.enemyCountField = this.menu.createTextField(5, 5, "Enemies Remaining: ");
+    this.gameTimer = this.menu.createTimeDisplay(40, 40, 100, 80);
+
+    this.menu.removeButton(this.startButton);
+
+    this.notifyMenuClicked();
   }
 
   notifyMenuClicked() {
