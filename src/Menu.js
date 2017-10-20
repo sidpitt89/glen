@@ -64,8 +64,8 @@ class Menu {
     return tf;
   }
 
-  createTimeDisplay(x, y, w, h) {
-    var td = new TimeDisplay(x, y, w, h, this);
+  createTimeDisplay(x, y) {
+    var td = new TimeDisplay(x, y, this);
     this.menuItems.push(td);
 
     this.dirty();

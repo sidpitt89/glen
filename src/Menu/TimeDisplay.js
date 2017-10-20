@@ -1,11 +1,6 @@
-class TimeDisplay {
-  constructor(x, y, w, h, parent, info) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-
-    this.parent = parent;
+class TimeDisplay extends TextField {
+  constructor(x, y, parent, info) {
+    super(x, y, "", parent);
 
     this.countUp = info && info.hasOwnProperty("countUp") ? info.countUp : true;
     this.time = info && info.hasOwnProperty("time") ? info.time : 0;
@@ -13,11 +8,6 @@ class TimeDisplay {
     this.initialTime = this.time;
     this.running = false;
     this.interval = null;
-
-    this.textWidth = 0;
-    this.textHeight = 24;
-    this.font = "14px monospace";
-    this.fontColor = "white";
   }
 
   start() {
@@ -58,17 +48,17 @@ class TimeDisplay {
       }
     }
 
-    this.time = Math.round(this.time * 100) / 100;
+    this.time = Math.round(this.time * 10) / 10;
 
     this.parent.dirty();
   }
 
-  render(ctx) {
-    this.text = "Time: " + this.time;
+  addZero(n) {
+    return (n.indexOf(".") == -1) ? (Number(n)).toFixed(1).toString() : n;
+  }
 
-    //TODO : remove this fill unless you really want a different BG color
-    ctx.fillStyle = "#999999";
-    ctx.fillRect(this.x, this.y, this.w, this.h);
+  render(ctx) {
+    this.text = "Time: " + this.addZero("" + this.time);
 
     ctx.font = this.font;
     var t = ctx.measureText(this.text);
