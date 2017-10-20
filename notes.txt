@@ -1,0 +1,20 @@
+Things To Do:
+
+- Spawn Points
+  - Add controls to level editor
+
+- Game Timer
+  - Counts up or down
+
+- Glass Walls
+  - Breaking through glass wall starts the timer for a level
+  - Maybe some are just there for fun
+
+- Goals
+  - Some sort of collectible or destroyable objective required
+    for level completion
+
+- Sliding Doors
+  - Only open in response to something happening (e.g. a goal is collected)
+
+- Improve Level Editor

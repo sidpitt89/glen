@@ -44,7 +44,7 @@ class Menu {
 
   mouseDownHandler(event) {
     if (this.stateManager.isTitle()) {
-      // TODO: Find better way to get local canvas coordinates. 
+      // TODO: Find better way to get local canvas coordinates.
       var mx = event.pageX - this.canvas.offsetLeft - 8;
       var my = event.pageY - this.canvas.offsetTop;
 
@@ -63,6 +63,13 @@ class Menu {
     return tf;
   }
 
+  createTimeDisplay(x, y, w, h) {
+    var td = new TimeDisplay(x, y, w, h, this);
+    this.menuItems.push(td);
+
+    return td;
+  }
+
   notifyChange(tf) {
     this.dirtyItems.push(tf);
   }
@@ -79,13 +86,20 @@ class Menu {
       this.ctx.fillStyle = "#999999";
       this.ctx.fillRect(0, 0, this.width, this.height);
 
-      while (this.dirtyItems.length) {
-        this.dirtyItems.shift().render(this.ctx);
+      // while (this.dirtyItems.length) {
+      //   this.dirtyItems.shift().render(this.ctx);
+      // }
+
+      var i;
+      for (i = 0; i < this.menuItems.length; i++) {
+        this.menuItems[i].render(this.ctx);
       }
 
-      for (var i = 0; i < this.buttons.length; i++) {
+      for (i = 0; i < this.buttons.length; i++) {
         this.buttons[i].render(this.ctx);
       }
+
+      this.dirtyItems = [];
     }
   }
 }

@@ -17,6 +17,8 @@ class GameController {
   initMenu() {
     this.menu = new Menu(this);
     this.enemyCountField = this.menu.createTextField(5, 5, "Enemies Remaining: ");
+
+    this.gameTimer = this.menu.createTimeDisplay(40, 40, 100, 80);
   }
 
   getMenuCanvas() {
@@ -67,5 +69,6 @@ class GameController {
     this.stateManager.setState(this.stateManager.STATE_PLAYING);
 
     this.game.startGame(this.currentLevel);
+    this.gameTimer.start();
   }
 }
