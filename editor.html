@@ -12,16 +12,10 @@
     <div id="rowTop" style="display:flex; flex-direction: row;">
       <div id="cancan" style="position:relative; width:600px;">
         <canvas id="canvas" width="600" height="600" style="position:absolute;top:0;left:0;"></canvas>
-        <canvas id="qtTestCanvas" width="600" height="600" style="position:absolute;top:0;left:0;pointer-events:none;"></canvas>
       </div>
-
       <canvas id="menuCanvas" width="200" height="600" style="padding-left: 4px;"></canvas>
     </div>
-
-    <div id="qtTest">
-        <button id="qtToggle">Toggle QT</button>
-    </div>
-    <div id="editControls" style="display: none;">
+    <div id="editControls">
       <button id="wallMode">Wall</button>
       <button id="enemyMode">Enemy</button>
       <a id="exportLevel">Export</a>
@@ -66,6 +60,9 @@
     <script src="src/Menu/TimeDisplay.js"></script>
     <script src="src/StateManager.js"></script>
     <script src="src/TitleScreen.js"></script>
+    <script src="src/Editor/Editor.js"></script>
+    <script src="src/Editor/TypeDefs/EnemyT.js"></script>
+    <script src="src/Editor/TypeDefs/WallT.js"></script>
     <script src="src/Editor/editorMain.js"></script>
   </body>
 </html>

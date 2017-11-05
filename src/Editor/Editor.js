@@ -1,6 +1,8 @@
 class Editor {
   constructor() {
-    this.renderer = new Renderer(this);
+    this.canvas = document.getElementById("canvas");
+    this.ctx = this.canvas.getContext("2d");
+
     this.dT = 0;
     this.lastFrameTimeMs = 0;
 
@@ -21,8 +23,10 @@ class Editor {
   }
 
   initState() {
-    this.levelInfo = new LevelInfo(this, this.renderer); // TODO: only used in a few places here. all of which can move to GameController.
-    this.currentLevel = new Level(); // TODO: Use different level class for editing?
+    // this.levelInfo = new LevelInfo(this, this.renderer); // TODO: only used in a few places here. all of which can move to GameController.
+    // this.currentLevel = new Level(); // TODO: Use different level class for editing?
+    //TODO: init state
+    this.addListeners();
   }
 
   addListeners() {
@@ -39,19 +43,19 @@ class Editor {
       me.onMouseMove(event);
     };
 
-    this.renderer.canvas.addEventListener("mouseenter", function(e) {
-      me.renderer.canvas.addEventListener("mousemove", callMM);
+    this.canvas.addEventListener("mouseenter", function(e) {
+      me.canvas.addEventListener("mousemove", callMM);
     });
-    this.renderer.canvas.addEventListener("mouseout", function(e) {
-      me.renderer.canvas.removeEventListener("mousemove", callMM);
+    this.canvas.addEventListener("mouseout", function(e) {
+      me.canvas.removeEventListener("mousemove", callMM);
     });
-    this.renderer.canvas.addEventListener("mousedown", function(e) {
+    this.canvas.addEventListener("mousedown", function(e) {
       // TODO: don't use hardcoded offsets like this!
       var x = event.pageX - 8;
       var y = event.pageY - 8;
 
       // Convert y to proper coordinate system
-      y = me.renderer.canvas.height - y;
+      // y = me.canvas.height - y;
 
       if (me.wallEditMode) {
         if (!me.wallAnchor) {
@@ -64,16 +68,16 @@ class Editor {
           var right = Math.max(a1[0], a2[0]);
           var top = Math.max(a1[1], a2[1]);
           var bottom = Math.min(a1[1], a2[1]);
-          me.currentLevel.editAddWall(left, right, top, bottom);
+          me.addWall(left, right, top, bottom);
           me.wallAnchor = null;
         }
       }
       else if (me.enemyEditMode) {
-        me.currentLevel.editAddEnemy(x, y);
+        me.addEnemy(x, y);
       }
     });
 
-    this.renderer.canvas.addEventListener("mouseup", function(e) {
+    this.canvas.addEventListener("mouseup", function(e) {
 
     });
 
@@ -111,7 +115,7 @@ class Editor {
     var y = event.pageY - 8;
 
     // Convert y to proper coordinate system
-    y = this.renderer.canvas.height - y;
+    y = this.canvas.height - y;
 
     // TODO: Doesn't do anything for now. Remove if not necessary in the future.
   }
@@ -121,30 +125,28 @@ class Editor {
   }
 
   render() {
-    this.renderer.startRender();
+    this.ctx.fillStyle = "#CCCCCC";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     for (var i = 0; i < this.entities.length; i++) {
-      this.entities[i].render(this.renderer);
+      this.entities[i].render(this.ctx);
     }
-
-    this.renderer.renderObjectLists();
-    this.renderer.finishRender();
   }
 
-  toggleEditMode() {
-    // if (!this.editing) {
-    //   this.editing = true;
-    //
-    //   this.currentLevel = new Level(this.levelInfo.levels[0]);
-    //   this.currentLevel.load(this);
-    //
-    //   document.getElementById("editControls").style.display = "block";
-    //   this.addEditListeners();
-    // }
-    // else {
-    //   this.editing = false;
-    //   document.getElementById("editControls").style.display = "none";
-    // }
+  addEnemy(x, y) {
+    var e = new EnemyT(x, y, 0);
+    this.entities.push(e);
+    this.enemies.push(e);
+  }
+
+  addWall(left, right, top, bottom) {
+    var x = right - ((right - left) / 2);
+    var y = top - ((top - bottom) / 2);
+    var w = (right - left);
+    var h = (top - bottom);
+    var wall = new WallT(x, y, w, h, 0);
+    this.walls.push(wall);
+    this.entities.push(wall);
   }
 
   importLevel(levelData) {

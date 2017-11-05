@@ -5,34 +5,31 @@
   // var spector = new SPECTOR.Spector();
   // spector.displayUI();
   // -----------------------------------
-  var game = new Game();
-  var controller = new GameController(game);
+  var editor = new Editor();
 
   function loop(time) {
-    if (time < (game.lastFrameTimeMs + game.timestep)) {
+    if (time < (editor.lastFrameTimeMs + editor.timestep)) {
       requestAnimationFrame(loop);
       return;
     }
 
-    // TODO: Consider moving dT and lastFrameTimeMs to GameController,
-    // TODO:   as well as running all updates and rendering through GameController.
-    game.dT += (time - game.lastFrameTimeMs);
-    game.lastFrameTimeMs = time;
+    editor.dT += (time - editor.lastFrameTimeMs);
+    editor.lastFrameTimeMs = time;
 
     var numUpdates = 0;
     var threshold = 150;
-    while (game.dT >= game.timestep) {
-      game.update(game.timestep);
-      game.dT -= game.timestep;
+    while (editor.dT >= editor.timestep) {
+      editor.update(editor.timestep);
+      editor.dT -= editor.timestep;
       numUpdates++;
       if (numUpdates > threshold) {
         // Bail on this nonsense.
         console.warn("Too much catch-up.")
-        game.dT = 0;
+        editor.dT = 0;
       }
     }
 
-    controller.render();
+    editor.render();
 
     requestAnimationFrame(loop);
   }
