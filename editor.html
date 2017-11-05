@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>glentest</title>
+    <script type="text/javascript" src="https://spectorcdn.babylonjs.com/spector.bundle.js"></script>
+    <script src="bower_components/twgl.js/dist/2.x/twgl-full.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
+  </head>
+  <body>
+    <div id="rowTop" style="display:flex; flex-direction: row;">
+      <div id="cancan" style="position:relative; width:600px;">
+        <canvas id="canvas" width="600" height="600" style="position:absolute;top:0;left:0;"></canvas>
+        <canvas id="qtTestCanvas" width="600" height="600" style="position:absolute;top:0;left:0;pointer-events:none;"></canvas>
+      </div>
+
+      <canvas id="menuCanvas" width="200" height="600" style="padding-left: 4px;"></canvas>
+    </div>
+
+    <div id="qtTest">
+        <button id="qtToggle">Toggle QT</button>
+    </div>
+    <div id="editControls" style="display: none;">
+      <button id="wallMode">Wall</button>
+      <button id="enemyMode">Enemy</button>
+      <a id="exportLevel">Export</a>
+      <input type="file" id="importLevel">Import</input>
+    </div>
+    <script id="vs" type="notjs">
+      attribute vec4 a_position;
+      uniform mat4 u_matrix;
+      void main(void) {
+        gl_Position = u_matrix * a_position;
+      }
+    </script>
+    <script id="fs" type="notjs">
+      precision mediump float;
+      uniform vec4 u_color;
+      void main(void) {
+        gl_FragColor = u_color;
+      }
+    </script>
+    <script src="src/Renderer.js"></script>
+    <script src="src/Entity.js"></script>
+    <script src="src/Emitter.js"></script>
+    <script src="src/ShooterEmitter.js"></script>
+    <script src="src/Shooter.js"></script>
+    <script src="src/Enemy.js"></script>
+    <script src="src/Seeker.js"></script>
+    <script src="src/RedBarrel.js"></script>
+    <script src="src/Wall.js"></script>
+    <script src="src/Region.js"></script>
+    <script src="src/levels/Level.js"></script>
+    <script src="src/levels/LevelInfo.js"></script>
+
+    <script src="src/sound/SoundManager.js"></script>
+    <script src="src/quadtree/QuadTree.js"></script>
+
+    <script src="src/displayObjects.js"></script>
+    <script src="src/Game.js"></script>
+    <script src="src/GameController.js"></script>
+    <script src="src/TextField.js"></script>
+    <script src="src/Menu.js"></script>
+    <script src="src/Menu/MenuButton.js"></script>
+    <script src="src/Menu/TimeDisplay.js"></script>
+    <script src="src/StateManager.js"></script>
+    <script src="src/TitleScreen.js"></script>
+    <script src="src/Editor/editorMain.js"></script>
+  </body>
+</html>
