@@ -18,3 +18,36 @@ Things To Do:
   - Only open in response to something happening (e.g. a goal is collected)
 
 - Improve Level Editor
+
+
+--------------------------------------------------------------------------------
+
+
+/*
+
+  Basic Level Format
+  {
+    --- v1.0
+      version: string("1.0.0"),
+      name: string,
+      entities:
+      {
+        enemies: [x, y, type],
+        walls: [x, y, w, h, type],
+      },
+      spawn: {
+        x: number,
+        y: number,
+        direction: number (angle in radians)
+      },
+    ---
+
+
+    --- Ideas for v1.1:
+      ?Level Dimensions (If Non-Default): [width, height],
+      ?Regions: [x, y],
+      ?Time Limits: [t1, t2, t3],
+    ---
+  }
+
+*/

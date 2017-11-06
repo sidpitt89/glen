@@ -16,10 +16,19 @@
       <canvas id="menuCanvas" width="200" height="600" style="padding-left: 4px;"></canvas>
     </div>
     <div id="editControls">
-      <button id="wallMode">Wall</button>
-      <button id="enemyMode">Enemy</button>
-      <a id="exportLevel">Export</a>
-      <input type="file" id="importLevel">Import</input>
+      <div class="ecRow">
+        <input type="text" id="levelName" placeholder="Level Name"></input>
+        <button id="spawnMode">Spawn</button>
+        <button id="wallMode">Wall</button>
+        <button id="enemyMode">Enemy</button>
+      </div>
+      <div class="ecRow">
+        <a id="exportLevel">Export</a>
+        <input type="file" id="importLevel">Import</input>
+      </div>
+      <div class="ecRow">
+        <button id="clearLevel">Clear Level</button>
+      </div>
     </div>
     <script id="vs" type="notjs">
       attribute vec4 a_position;

@@ -1,0 +1,15 @@
+div.ecRow {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: row;
+}
+
+div.ecRow > * {
+  margin-left: 10px;
+}
+
+#editControls {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+}

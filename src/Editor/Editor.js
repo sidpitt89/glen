@@ -1,6 +1,10 @@
 class Editor {
+  static LEVEL_VERSION() {
+    return "1.0.0";
+  }
+
   constructor() {
-    this.canvas = document.getElementById("canvas");
+    this.initElems();
     this.ctx = this.canvas.getContext("2d");
 
     this.dT = 0;
@@ -9,106 +13,126 @@ class Editor {
     var maxFps = 60;
     this.timestep = 1000 / maxFps;
 
-    // These are reset by level load
-    this.entities = [];
-    this.enemies = [];
-    this.projectileSources = [];
-    this.walls = [];
-    this.regions = [];
-
     this.initState();
-    // this.addListeners();
+  }
 
-    this.paused = false;
+  initElems() {
+    this.canvas = document.getElementById("canvas");
+    this.levelNameElem = document.getElementById("levelName");
+    this.clearLevelElem = document.getElementById("clearLevel");
   }
 
   initState() {
+    this.paused = false;
+
     this.useGrid = true;
     this.gridW = 10;
     this.gridH = 10;
     this.cursorX = 0;
     this.cursorY = 0;
 
+    this.entities = [];
+    this.enemies = [];
+    this.projectileSources = [];
+    this.walls = [];
+    this.regions = [];
+
+    this.levelName = "";
+    this.spawn = null;
+
     this.addListeners();
   }
 
   addListeners() {
-    var me = this;
-    window.addEventListener("keydown", function(event) {
+    window.addEventListener("keydown", event => {
 
     });
 
-    window.addEventListener("keyup", function(event) {
+    window.addEventListener("keyup", event => {
 
     });
 
-    var callMM = function(event) {
-      me.onMouseMove(event);
+    var callMM = event => {
+      this.onMouseMove(event);
     };
 
-    this.canvas.addEventListener("mouseenter", function(e) {
-      me.canvas.addEventListener("mousemove", callMM);
+    this.canvas.addEventListener("mouseenter", event => {
+      this.canvas.addEventListener("mousemove", callMM);
     });
-    this.canvas.addEventListener("mouseout", function(e) {
-      me.canvas.removeEventListener("mousemove", callMM);
+    this.canvas.addEventListener("mouseout", event => {
+      this.canvas.removeEventListener("mousemove", callMM);
     });
-    this.canvas.addEventListener("mousedown", function(e) {
-      var x = me.cursorX; //event.pageX - 8;
-      var y = me.cursorY; //event.pageY - 8;
+    this.canvas.addEventListener("mousedown", event => {
+      var x = this.cursorX; //event.pageX - 8;
+      var y = this.cursorY; //event.pageY - 8;
 
       // Convert y to proper coordinate system
-      // y = me.canvas.height - y;
+      // y = this.canvas.height - y;
 
-      if (me.wallEditMode) {
-        if (!me.wallAnchor) {
-          me.wallAnchor = [x, y];
+      if (this.wallEditMode) {
+        if (!this.wallAnchor) {
+          this.wallAnchor = [x, y];
         }
         else {
-          var a1 = me.wallAnchor;
+          var a1 = this.wallAnchor;
           var a2 = [x, y];
           var left = Math.min(a1[0], a2[0]);
           var right = Math.max(a1[0], a2[0]);
           var top = Math.max(a1[1], a2[1]);
           var bottom = Math.min(a1[1], a2[1]);
-          me.addWall(left, right, top, bottom);
-          me.wallAnchor = null;
+          this.addWall(left, right, top, bottom);
+          this.wallAnchor = null;
         }
       }
-      else if (me.enemyEditMode) {
-        me.addEnemy(x, y);
+      else if (this.enemyEditMode) {
+        this.addEnemy(x, y);
+      }
+      else if (this.spawnEditMode) {
+        this.addSpawn(x, y);
       }
     });
 
-    this.canvas.addEventListener("mouseup", function(e) {
+    this.canvas.addEventListener("mouseup", event => {
 
     });
 
-    document.getElementById("wallMode").addEventListener("click", function(e) {
-      me.wallAnchor = null;
-      me.enemyEditMode = true;
-      me.wallEditMode = true;
-    });
-    document.getElementById("enemyMode").addEventListener("click", function(e) {
-      me.wallAnchor = null;
-      me.wallEditMode = false;
-      me.enemyEditMode = true;
+    this.levelNameElem.addEventListener("change", event => {
+      this.levelName = this.levelNameElem.value;
     });
 
-    document.getElementById("exportLevel").addEventListener("click", function(e) {
-      this.href = me.exportLevel();
-      this.download = me.levelName;
+    document.getElementById("spawnMode").addEventListener("click", event => {
+      this.resetToolState();
+      this.spawnEditMode = true;
+    });
+
+    document.getElementById("wallMode").addEventListener("click", event => {
+      this.resetToolState();
+      this.wallEditMode = true;
+    });
+    document.getElementById("enemyMode").addEventListener("click", event => {
+      this.resetToolState();
+      this.enemyEditMode = true;
+    });
+
+    document.getElementById("exportLevel").addEventListener("click", event => {
+      event.target.href = this.exportLevel();
+      event.target.download = this.levelName;
     }, false);
 
-    document.getElementById("importLevel").addEventListener("change", function(e) {
-      var f = this.files[0];
+    document.getElementById("importLevel").addEventListener("change", event => {
+      var f = event.target.files[0];
       var fR = new FileReader();
-      fR.onload = function(e) {
+      fR.onload = e => {
         var r = e.target.result;
         var ld = JSON.parse(r);
-        me.importLevel(ld);
+        this.importLevel(ld);
       };
       fR.readAsText(f);
     }, false);
+
+    this.clearLevelElem.addEventListener("click", event => {
+      this.clearLevel();
+    })
   }
 
   onMouseMove(event) {
@@ -135,6 +159,11 @@ class Editor {
       this.entities[i].render(this.ctx);
     }
 
+    if (this.spawn != null) {
+      this.ctx.fillStyle = "#22FF11";
+      this.ctx.fillRect(this.spawn.x - 4, this.spawn.y - 4, 8, 8);
+    }
+
     if (this.wallAnchor != null) {
       this.ctx.fillStyle = "#FF7700";
       this.ctx.fillRect(this.wallAnchor[0] - 3, this.wallAnchor[1] - 3, 6, 6);
@@ -156,6 +185,13 @@ class Editor {
     this.ctx.fillRect(this.cursorX - 4, this.cursorY - 4, 8, 8);
   }
 
+  resetToolState() {
+    this.wallAnchor = null;
+    this.wallEditMode = false;
+    this.enemyEditMode = false;
+    this.spawnEditMode = false;
+  }
+
   addEnemy(x, y) {
     var e = new EnemyT(x, y, 0);
     this.entities.push(e);
@@ -172,12 +208,116 @@ class Editor {
     this.entities.push(wall);
   }
 
-  importLevel(levelData) {
-    // this.currentLevel = new Level(this.levelInfo.createImportInfo(levelData));
-    // this.currentLevel.load(this);
+  addSpawn(x, y) {
+    // TODO: Control spawn direction
+    this.spawn = {
+      x: x,
+      y: y,
+      direction: 0,
+    };
+  }
+
+  validateImportData(data) {
+    // NOTE: This can be made much more involved if needed.
+    if (data == null || data.version == null) {
+      return false;
+    }
+
+    return true;
+  }
+
+  importLevel(data) {
+    if (!this.validateImportData(data)) {
+      console.log("Cannot import given level.");
+      return;
+    }
+    
+    this.clearLevel();
+
+    // NOTE: Behavior may need to vary in the future, based on the provided version.
+    this.levelName = data.name;
+    this.levelNameElem.value = this.levelName;
+
+    this.spawn = data.spawn;
+
+    var i;
+    var enemies = data.entities.enemies;
+    if (enemies != null) {
+      for (i = 0; i < enemies.length; i++) {
+        var e = enemies[i];
+        var ne = new EnemyT(e.x, e.y, e.type);
+        this.enemies.push(ne);
+        this.entities.push(ne);
+      }
+    }
+
+    var walls = data.entities.walls;
+    if (walls != null) {
+      for (i = 0; i < walls.length; i++) {
+        var w = walls[i];
+        var nw = new WallT(w.x, w.y, w.w, w.h, w.type);
+        this.walls.push(nw);
+        this.entities.push(nw);
+      }
+    }
+
   }
 
   exportLevel() {
-    // TODO --- Rethink level format and construction of levels. It's way too complicated right now.
+    // TODO --- Rethink construction of levels, based on new level format. It's way too complicated right now.
+
+    var levelData = {
+      version: Editor.LEVEL_VERSION(),
+      name: this.levelName,
+      spawn: this.spawn,
+      entities: this.getEntityExportData(),
+    };
+
+    var blob = new Blob([JSON.stringify(levelData, null, 2)], {type : 'application/json'});
+    return URL.createObjectURL(blob);
+  }
+
+  getEntityExportData(type) {
+    var ed = {
+      enemies: [],
+      walls: [],
+    };
+
+    var i;
+    for (i = 0; i < this.enemies.length; i++) {
+      var e = this.enemies[i];
+      ed.enemies.push({
+        x: e.x,
+        y: e.y,
+        type: e.type
+      });
+    }
+    for (i = 0; i < this.walls.length; i++) {
+      var w = this.walls[i];
+      ed.walls.push({
+        x: w.x,
+        y: w.y,
+        w: w.w,
+        h: w.h,
+        type: w.type
+      });
+    }
+
+    return ed;
+  }
+
+  clearLevel() {
+    this.resetToolState();
+
+    this.entities = [];
+    this.enemies = [];
+    this.projectileSources = [];
+    this.walls = [];
+    this.regions = [];
+
+    this.spawn = null;
+
+    this.levelName = "";
+    this.levelNameElem.value = null;
   }
 }
