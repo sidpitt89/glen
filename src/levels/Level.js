@@ -20,6 +20,7 @@ class Level {
     this.enemyAddFunction = info.enemyAddFunction;
 
     this.info = info;
+    this.uniqueLevelInfo = info.uli;
   }
 
   log(action) {
@@ -46,37 +47,37 @@ class Level {
 
   initEnemies(game) {
     if (this.enemyInfo && this.enemyInitFunction) {
-      this.enemyInitFunction(this.enemyInfo, game);
+      this.enemyInitFunction(this.enemyInfo, game, this.uniqueLevelInfo);
     }
   }
 
   initInteractives(game) {
     if (this.interactivesInfo && this.interactivesInitFunction) {
-      this.interactivesInitFunction(this.interactivesInfo, game);
+      this.interactivesInitFunction(this.interactivesInfo, game, this.uniqueLevelInfo);
     }
   }
 
   initWalls(game) {
     if (this.wallInfo && this.wallInitFunction) {
-      this.wallInitFunction(this.wallInfo, game);
+      this.wallInitFunction(this.wallInfo, game, this.uniqueLevelInfo);
     }
   }
 
   initRegions(game) {
     if (this.regionInfo && this.regionInitFunction) {
-      this.regionInitFunction(this.regionInfo, game);
+      this.regionInitFunction(this.regionInfo, game, this.uniqueLevelInfo);
     }
   }
 
   initShooter(game) {
     if (this.shooterInfo && this.shooterInitFunction) {
-      this.shooterInitFunction(this.shooterInfo, game);
+      this.shooterInitFunction(this.shooterInfo, game, this.uniqueLevelInfo);
     }
   }
 
   initSeekers(game) {
     if (this.seekerInfo && this.seekerInitFunction) {
-      this.seekerInitFunction(this.seekerInfo, game);
+      this.seekerInitFunction(this.seekerInfo, game, this.uniqueLevelInfo);
     }
   }
 
@@ -107,5 +108,29 @@ class Level {
 
     var blob = new Blob([JSON.stringify(levelData, null, 2)], {type : 'application/json'});
     return URL.createObjectURL(blob);
+  }
+
+  static convertCoordinates(level, canvas) {
+    if (!level.uniqueLevelInfo) {
+      return;
+    }
+
+    var cH = canvas.height;
+    var i;
+    var c;
+
+    c = level.uniqueLevelInfo.entities.enemies;
+    for (i = 0; i < c.length; i++) {
+      c[i].y = cH - c[i].y;
+    }
+
+    c = level.uniqueLevelInfo.entities.walls;
+    for (i = 0; i < c.length; i++) {
+      c[i].y = cH - c[i].y;
+    }
+
+    if (level.uniqueLevelInfo.spawn) {
+      level.uniqueLevelInfo.spawn.y = cH - level.uniqueLevelInfo.spawn.y;
+    }
   }
 }

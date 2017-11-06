@@ -43,7 +43,12 @@ class Game {
     this.soundManager.addSound("assets/sounds/shoot2.wav", "shoot");
   }
 
-  loadLevel(level) {
+  loadLevel(level, fromImport) {
+    if (fromImport) {
+      // Levels created in the editor have reversed y coordinates and thus need those converted.
+      Level.convertCoordinates(level, this.renderer.canvas);
+    }
+    
     this.renderer.resetDrawObjects();
 
     this.currentLevel = level;
@@ -376,8 +381,7 @@ class Game {
   }
 
   importLevel(levelData) {
-    this.currentLevel = new Level(this.levelInfo.createImportInfo(levelData));
-    this.currentLevel.load(this);
+    this.loadLevel(new Level(this.levelInfo.createInfo(levelData)), true);
   }
 
   addEditListeners() {

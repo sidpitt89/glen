@@ -12,6 +12,7 @@ class LevelInfo {
     this.levels.push(this.getLevelOneInfo());
   }
 
+  // NOTE: Outdated
   createImportInfo(data) {
     var lei = this.getLevelEditInfo();
     lei.name = data.name;
@@ -40,6 +41,56 @@ class LevelInfo {
     };
 
     return lei;
+  }
+
+  // NOTE: testing out the new level format (BLF 1.0.0) with this function
+  createInfo(data) {
+    var li = this.getDefaultLevelInfo();
+    li.uli = data;
+    li.name = data.name;
+
+    li.enemyInitFunction = function (info, game, uli) {
+      var enems = uli.entities.enemies;
+      for (var i = 0; i < enems.length; i++) {
+        info.x = enems[i].x;
+        info.y = enems[i].y;
+        info.type = enems[i].type; // TODO: Use type to determine which constructor to use (i.e. Enemy, Seeker, RedBarrel, etc.)
+        var enemy = new Enemy(info);
+        game.enemies.push(enemy);
+        game.entities.push(enemy);
+      }
+    };
+
+    li.wallInitFunction = function (info, game, uli) {
+      var walls = uli.entities.walls;
+      for (var i = 0; i < walls.length; i++) {
+        info.x = walls[i].x;
+        info.y = walls[i].y;
+        info.w = walls[i].w;
+        info.h = walls[i].h;
+        info.type = walls[i].type; // TODO: Use type to determine which constructor to use (i.e. Wall, Glass, etc.)
+        var wall = new Wall(info);
+        game.entities.push(wall);
+        game.walls.push(wall);
+      }
+    };
+
+    li.shooterInitFunction = function (info, game, uli) {
+      if (uli.spawn != null) {
+        info.x = uli.spawn.x;
+        info.y = uli.spawn.y;
+      }
+
+      var shooter = new Shooter(info);
+      game.entities.push(shooter);
+      game.shooter = shooter;
+    };
+
+    return li;
+  }
+
+  getDefaultLevelInfo() {
+    return this.getLevelEditInfo(); // TODO: make this better OR just rename getLevelEditInfo to getDefaultLevelInfo
   }
 
   getLevelEditInfo() {
