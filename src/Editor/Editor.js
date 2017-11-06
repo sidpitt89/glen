@@ -23,9 +23,12 @@ class Editor {
   }
 
   initState() {
-    // this.levelInfo = new LevelInfo(this, this.renderer); // TODO: only used in a few places here. all of which can move to GameController.
-    // this.currentLevel = new Level(); // TODO: Use different level class for editing?
-    //TODO: init state
+    this.useGrid = true;
+    this.gridW = 10;
+    this.gridH = 10;
+    this.cursorX = 0;
+    this.cursorY = 0;
+
     this.addListeners();
   }
 
@@ -50,9 +53,8 @@ class Editor {
       me.canvas.removeEventListener("mousemove", callMM);
     });
     this.canvas.addEventListener("mousedown", function(e) {
-      // TODO: don't use hardcoded offsets like this!
-      var x = event.pageX - 8;
-      var y = event.pageY - 8;
+      var x = me.cursorX; //event.pageX - 8;
+      var y = me.cursorY; //event.pageY - 8;
 
       // Convert y to proper coordinate system
       // y = me.canvas.height - y;
@@ -115,9 +117,10 @@ class Editor {
     var y = event.pageY - 8;
 
     // Convert y to proper coordinate system
-    y = this.canvas.height - y;
+    // y = this.canvas.height - y;
 
-    // TODO: Doesn't do anything for now. Remove if not necessary in the future.
+    this.cursorX = this.useGrid ? Math.round(x / this.gridW) * this.gridW : x;
+    this.cursorY = this.useGrid ? Math.round(y / this.gridH) * this.gridH : y;
   }
 
   update(dT) {
@@ -131,6 +134,21 @@ class Editor {
     for (var i = 0; i < this.entities.length; i++) {
       this.entities[i].render(this.ctx);
     }
+
+    this.ctx.strokeStyle = "#FFFFFF";
+    this.ctx.lineWidth = 1;
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, this.cursorY);
+    this.ctx.lineTo(this.canvas.width, this.cursorY);
+    this.ctx.stroke();
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.cursorX, 0);
+    this.ctx.lineTo(this.cursorX, this.canvas.height);
+    this.ctx.stroke();
+
+    this.ctx.fillStyle = "#000000";
+    this.ctx.fillRect(this.cursorX - 4, this.cursorY - 4, 8, 8);
   }
 
   addEnemy(x, y) {
