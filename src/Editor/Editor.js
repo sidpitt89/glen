@@ -95,8 +95,8 @@ class Editor {
     });
 
     document.getElementById("exportLevel").addEventListener("click", function(e) {
-      this.href = me.currentLevel.exportLevel();
-      this.download = me.currentLevel.name;
+      this.href = me.exportLevel();
+      this.download = me.levelName;
     }, false);
 
     document.getElementById("importLevel").addEventListener("change", function(e) {
@@ -135,6 +135,11 @@ class Editor {
       this.entities[i].render(this.ctx);
     }
 
+    if (this.wallAnchor != null) {
+      this.ctx.fillStyle = "#FF7700";
+      this.ctx.fillRect(this.wallAnchor[0] - 3, this.wallAnchor[1] - 3, 6, 6);
+    }
+
     this.ctx.strokeStyle = "#FFFFFF";
     this.ctx.lineWidth = 1;
     this.ctx.beginPath();
@@ -170,5 +175,9 @@ class Editor {
   importLevel(levelData) {
     // this.currentLevel = new Level(this.levelInfo.createImportInfo(levelData));
     // this.currentLevel.load(this);
+  }
+
+  exportLevel() {
+    // TODO --- Rethink level format and construction of levels. It's way too complicated right now.
   }
 }
