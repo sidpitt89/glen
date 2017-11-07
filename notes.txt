@@ -1,8 +1,5 @@
 Things To Do:
 
-- Spawn Points
-  - Add controls to level editor
-
 - Game Timer
   - Counts up or down
 
@@ -17,7 +14,32 @@ Things To Do:
 - Sliding Doors
   - Only open in response to something happening (e.g. a goal is collected)
 
+- Different Regions
+  - Speed boost region, OR just have the powered-up bullets propel you faster
+  - Invisibility Region?
+  - Healing / Damage Regions (Need a concept of health and damage first)
+
+- Health & Damage
+  - Need to turn on collision detection between player and damage sources / enemies
+  - One hit kills you? Or have health bar?
+
+- Graphics Overhaul
+  - Maybe have very slight isometric look? Need some way to convey depth (i.e. what is a region vs. what is a wall)
+  - Zoom capabilities
+  - Use textures?
+  - Implement some sort of Sprite system.
+    - (Need to figure out how to render images with webgl first.)
+    - (Look at old sprite thing you made)
+
+- Level Progression
+  - Add level sequencing controls to level editor? Make another tool?
+- Level Picker
+  - Way to choose levels from the side menu
+  - Displays previous scores?
+
 - Improve Level Editor
+  - Made some progress, but this is an on-going process
+  - Think of ways to speed up the process of adding new controls
 
 
 --------------------------------------------------------------------------------
@@ -47,6 +69,12 @@ Things To Do:
     --- Ideas for v1.1:
       ?Level Dimensions (If Non-Default): [width, height],
       ?Time Limits: [t1, t2, t3],
+    ---
+
+    --- Ideas for v1.???:
+      ?Glass Walls,
+      ?Sliding Doors,
+      ?Obstacles/Goals
     ---
   }
 
