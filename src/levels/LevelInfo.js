@@ -114,6 +114,9 @@ class LevelInfo {
 
     li.regionInitFunction = function (info, game, uli) {
       var regions = uli.entities.regions;
+      if (!regions) {
+        return;
+      }
       for (var i = 0; i < regions.length; i++) {
         info.x = regions[i].x;
         info.y = regions[i].y;

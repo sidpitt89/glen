@@ -417,7 +417,7 @@ class Editor {
         y: r.y,
         w: r.w,
         h: r.h,
-        type: w.type
+        type: r.type
       });
     }
 
