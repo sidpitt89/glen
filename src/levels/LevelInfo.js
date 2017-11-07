@@ -52,10 +52,47 @@ class LevelInfo {
     li.enemyInitFunction = function (info, game, uli) {
       var enems = uli.entities.enemies;
       for (var i = 0; i < enems.length; i++) {
+        if (enems[i].type != 0) {
+          // TODO: Use some sort of factory class to remove the need for separate init functions for every enemy type
+          // TODO: Also, use constants for enemy types
+          continue;
+        }
         info.x = enems[i].x;
         info.y = enems[i].y;
-        info.type = enems[i].type; // TODO: Use type to determine which constructor to use (i.e. Enemy, Seeker, RedBarrel, etc.)
+        info.type = enems[i].type;
         var enemy = new Enemy(info);
+        game.enemies.push(enemy);
+        game.entities.push(enemy);
+      }
+    };
+
+    li.seekerInitFunction = function (info, game, uli) {
+      var enems = uli.entities.enemies;
+      for (var i = 0; i < enems.length; i++) {
+        if (enems[i].type != 1) {
+          // TODO: Use some sort of factory class to remove the need for separate init functions for every enemy type
+          continue;
+        }
+        info.x = enems[i].x;
+        info.y = enems[i].y;
+        info.type = enems[i].type;
+        var enemy = new Seeker(info);
+        game.enemies.push(enemy);
+        game.entities.push(enemy);
+      }
+    };
+
+    li.interactivesInitFunction = function (info, game, uli) {
+      var enems = uli.entities.enemies;
+      for (var i = 0; i < enems.length; i++) {
+        if (enems[i].type != 2) {
+          // TODO: Use some sort of factory class to remove the need for separate init functions for every enemy type
+          continue;
+        }
+        info.x = enems[i].x;
+        info.y = enems[i].y;
+        info.type = enems[i].type;
+        var enemy = new RedBarrel(info);
         game.enemies.push(enemy);
         game.entities.push(enemy);
       }
@@ -128,6 +165,23 @@ class LevelInfo {
       ],
     };
 
+    var seekerInfo = {
+      x: 120,
+      y: 400,
+      z: 0,
+      r: {
+        x: 0, y: 0, z: 0, rZ: 0.001,
+      },
+      w: 12,
+      h: 12,
+      vX: 0.5,
+      game: this.game,
+      health: 5,
+      programInfo: this.renderer.programInfoBasic,
+      bufferInfo: this.renderer.enemyBufferInfo,
+      uniforms: this.renderer.enemyUniforms,
+    };
+
     var barrelInfo = {
       x: 300,
       y: 400,
@@ -184,6 +238,7 @@ class LevelInfo {
     shooterInfo.emitterInfo = shooterEmitterInfo;
 
     info.enemyInfo = enemyInfo;
+    info.seekerInfo = seekerInfo;
     info.interactivesInfo = barrelInfo;
     info.wallInfo = wallInfo;
     info.shooterInfo = shooterInfo;

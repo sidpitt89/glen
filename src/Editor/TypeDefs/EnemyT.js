@@ -12,10 +12,20 @@ class EnemyT {
       y: this.y
     };
     switch (this.type) {
-      case 0:
+      case 0: // Standard
         info.color = "red";
         info.w = 8;
         info.h = 8;
+        break;
+      case 1: // Seeker
+        info.color = "#F74AAB";
+        info.w = 8;
+        info.h = 8;
+        break;
+      case 2: // Red Barrel
+        info.color = "orange";
+        info.w = 12;
+        info.h = 12;
         break;
       default:
         info.color = "blue";

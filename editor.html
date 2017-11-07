@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <title>glentest</title>
-    <script type="text/javascript" src="https://spectorcdn.babylonjs.com/spector.bundle.js"></script>
+    <!-- <script type="text/javascript" src="https://spectorcdn.babylonjs.com/spector.bundle.js"></script> -->
     <script src="bower_components/twgl.js/dist/2.x/twgl-full.js"></script>
 
     <link rel="stylesheet" type="text/css" href="styles/main.css">
@@ -13,23 +13,51 @@
       <div id="cancan" style="position:relative; width:600px;">
         <canvas id="canvas" width="600" height="600" style="position:absolute;top:0;left:0;"></canvas>
       </div>
-      <canvas id="menuCanvas" width="200" height="600" style="padding-left: 4px;"></canvas>
+      <div id="sideMenu" style="width:300px; display:flex; flex-direction:column;">
+        <div class="ecRow">
+          <input type="text" id="levelName" placeholder="Level Name"></input>
+        </div>
+        <div class="ecRow">
+          <button id="wallMode">Wall</button>
+          <button id="enemyMode">Enemy</button>
+          <button id="spawnMode">Spawn</button>
+        </div>
+        <div class="ecRow" id="sideRowOne">
+          <div id="enemyControls" class="controlGroup">
+            <label for="enemyTypeSelect">Type:&nbsp;&nbsp;</label>
+            <select id="enemyTypeSelect" style="height:20px;">
+              <option value="0">Standard</option>
+              <option value="1">Seeker</option>
+              <option value="2">Red Barrel</option>
+            </select>
+          </div>
+          <div id="wallControls" class="controlGroup">
+            <label for="wallTypeSelect">Type:&nbsp;&nbsp;</label>
+            <select id="wallTypeSelect" style="height:20px;">
+              <option value="0">Standard</option>
+            </select>
+          </div>
+          <div id="spawnControls" class="controlGroup">
+            <label for="spawnRotation">Rotation:&nbsp;&nbsp;</label>
+            <input type="number" id="spawnRotation" style="height:20px;"></input>
+          </div>
+        </div>
+        <div class="ecRow" id="sideRowTwo">
+        </div>
+        <div class="ecRow" id="sideRowThree">
+        </div>
+        <div class="ecRow">
+          <a id="exportLevel" style="cursor:pointer; padding:2px; border: 1px solid">Export</a>
+        </div>
+        <div class="ecRow">
+          <input type="file" id="importLevel">Import</input>
+        </div>
+        <div class="ecRow">
+          <button id="clearLevel">Clear Level</button>
+        </div>
+      </div>
     </div>
-    <div id="editControls">
-      <div class="ecRow">
-        <input type="text" id="levelName" placeholder="Level Name"></input>
-        <button id="spawnMode">Spawn</button>
-        <button id="wallMode">Wall</button>
-        <button id="enemyMode">Enemy</button>
-      </div>
-      <div class="ecRow">
-        <a id="exportLevel">Export</a>
-        <input type="file" id="importLevel">Import</input>
-      </div>
-      <div class="ecRow">
-        <button id="clearLevel">Clear Level</button>
-      </div>
-    </div>
+
     <script id="vs" type="notjs">
       attribute vec4 a_position;
       uniform mat4 u_matrix;

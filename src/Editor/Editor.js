@@ -20,6 +20,12 @@ class Editor {
     this.canvas = document.getElementById("canvas");
     this.levelNameElem = document.getElementById("levelName");
     this.clearLevelElem = document.getElementById("clearLevel");
+    this.enemyControlsElem = document.getElementById("enemyControls");
+    this.wallControlsElem = document.getElementById("wallControls");
+    this.spawnControlsElem = document.getElementById("spawnControls");
+    this.enemyTypeElem = document.getElementById("enemyTypeSelect");
+    this.wallTypeElem = document.getElementById("wallTypeSelect");
+    this.spawnRotationElem = document.getElementById("spawnRotation");
   }
 
   initState() {
@@ -101,17 +107,14 @@ class Editor {
     });
 
     document.getElementById("spawnMode").addEventListener("click", event => {
-      this.resetToolState();
-      this.spawnEditMode = true;
+      this.switchToolState(0);
     });
 
     document.getElementById("wallMode").addEventListener("click", event => {
-      this.resetToolState();
-      this.wallEditMode = true;
+      this.switchToolState(1);
     });
     document.getElementById("enemyMode").addEventListener("click", event => {
-      this.resetToolState();
-      this.enemyEditMode = true;
+      this.switchToolState(2);
     });
 
     document.getElementById("exportLevel").addEventListener("click", event => {
@@ -185,15 +188,38 @@ class Editor {
     this.ctx.fillRect(this.cursorX - 4, this.cursorY - 4, 8, 8);
   }
 
+  switchToolState(ts) {
+    this.resetToolState();
+    switch (ts) {
+      case 0:
+        this.spawnEditMode = true;
+        this.spawnControlsElem.style.display = "flex";
+        break;
+      case 1:
+        this.wallEditMode = true;
+        this.wallControlsElem.style.display = "flex";
+        break;
+      case 2:
+        this.enemyEditMode = true;
+        this.enemyControlsElem.style.display = "flex";
+        break;
+    }
+  }
+
   resetToolState() {
     this.wallAnchor = null;
     this.wallEditMode = false;
     this.enemyEditMode = false;
     this.spawnEditMode = false;
+
+    this.enemyControlsElem.style.display = "none";
+    this.wallControlsElem.style.display = "none";
+    this.spawnControlsElem.style.display = "none";
   }
 
   addEnemy(x, y) {
-    var e = new EnemyT(x, y, 0);
+    var type = parseInt(this.enemyTypeElem.value);
+    var e = new EnemyT(x, y, type);
     this.entities.push(e);
     this.enemies.push(e);
   }
@@ -231,7 +257,7 @@ class Editor {
       console.log("Cannot import given level.");
       return;
     }
-    
+
     this.clearLevel();
 
     // NOTE: Behavior may need to vary in the future, based on the provided version.
