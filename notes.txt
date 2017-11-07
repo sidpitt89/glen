@@ -34,6 +34,7 @@ Things To Do:
       {
         enemies: [x, y, type],
         walls: [x, y, w, h, type],
+        regions: [x, y, w, h, type], // NOTE: ADDED THIS WITHOUT INCREMENTING VERSION
       },
       spawn: {
         x: number,
@@ -45,7 +46,6 @@ Things To Do:
 
     --- Ideas for v1.1:
       ?Level Dimensions (If Non-Default): [width, height],
-      ?Regions: [x, y],
       ?Time Limits: [t1, t2, t3],
     ---
   }

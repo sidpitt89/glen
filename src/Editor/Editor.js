@@ -23,8 +23,10 @@ class Editor {
     this.enemyControlsElem = document.getElementById("enemyControls");
     this.wallControlsElem = document.getElementById("wallControls");
     this.spawnControlsElem = document.getElementById("spawnControls");
+    this.regionControlsElem = document.getElementById("regionControls");
     this.enemyTypeElem = document.getElementById("enemyTypeSelect");
     this.wallTypeElem = document.getElementById("wallTypeSelect");
+    this.regionTypeElem = document.getElementById("regionTypeSelect");
     this.spawnRotationElem = document.getElementById("spawnRotation");
   }
 
@@ -45,6 +47,26 @@ class Editor {
 
     this.levelName = "";
     this.spawn = null;
+
+    this.editMode = null;
+    this.toolStateMap = {
+      0: "spawn",
+      1: "wall",
+      2: "enemy",
+      3: "region",
+      spawn: 0,
+      wall: 1,
+      enemy: 2,
+      region: 3,
+    };
+
+    // This is dumb, but I think it's better than using hardcoded strings everywhere or static functions
+    this.editModeMap = {
+      spawn: "spawn",
+      wall: "wall",
+      enemy: "enemy",
+      region: "region",
+    };
 
     this.addListeners();
   }
@@ -68,35 +90,7 @@ class Editor {
     this.canvas.addEventListener("mouseout", event => {
       this.canvas.removeEventListener("mousemove", callMM);
     });
-    this.canvas.addEventListener("mousedown", event => {
-      var x = this.cursorX; //event.pageX - 8;
-      var y = this.cursorY; //event.pageY - 8;
-
-      // Convert y to proper coordinate system
-      // y = this.canvas.height - y;
-
-      if (this.wallEditMode) {
-        if (!this.wallAnchor) {
-          this.wallAnchor = [x, y];
-        }
-        else {
-          var a1 = this.wallAnchor;
-          var a2 = [x, y];
-          var left = Math.min(a1[0], a2[0]);
-          var right = Math.max(a1[0], a2[0]);
-          var top = Math.max(a1[1], a2[1]);
-          var bottom = Math.min(a1[1], a2[1]);
-          this.addWall(left, right, top, bottom);
-          this.wallAnchor = null;
-        }
-      }
-      else if (this.enemyEditMode) {
-        this.addEnemy(x, y);
-      }
-      else if (this.spawnEditMode) {
-        this.addSpawn(x, y);
-      }
-    });
+    this.canvas.addEventListener("mousedown", event => this.onMouseDown(event));
 
     this.canvas.addEventListener("mouseup", event => {
 
@@ -107,14 +101,17 @@ class Editor {
     });
 
     document.getElementById("spawnMode").addEventListener("click", event => {
-      this.switchToolState(0);
+      this.switchToolState(this.toolStateMap.spawn);
     });
 
     document.getElementById("wallMode").addEventListener("click", event => {
-      this.switchToolState(1);
+      this.switchToolState(this.toolStateMap.wall);
     });
     document.getElementById("enemyMode").addEventListener("click", event => {
-      this.switchToolState(2);
+      this.switchToolState(this.toolStateMap.enemy);
+    });
+    document.getElementById("regionMode").addEventListener("click", event => {
+      this.switchToolState(this.toolStateMap.region);
     });
 
     document.getElementById("exportLevel").addEventListener("click", event => {
@@ -150,6 +147,58 @@ class Editor {
     this.cursorY = this.useGrid ? Math.round(y / this.gridH) * this.gridH : y;
   }
 
+  onMouseDown(event) {
+    if (!this.editMode) {
+      return;
+    }
+
+    // TODO: don't use hardcoded offsets like this!
+    var x = this.cursorX; //event.pageX - 8;
+    var y = this.cursorY; //event.pageY - 8;
+
+    // Convert y to proper coordinate system
+    // y = this.canvas.height - y;
+    var em = this.editModeMap;
+    switch (this.editMode) {
+      case em.wall:
+        if (!this.wallAnchor) {
+          this.wallAnchor = [x, y];
+        }
+        else {
+          var a1 = this.wallAnchor;
+          var a2 = [x, y];
+          var left = Math.min(a1[0], a2[0]);
+          var right = Math.max(a1[0], a2[0]);
+          var top = Math.max(a1[1], a2[1]);
+          var bottom = Math.min(a1[1], a2[1]);
+          this.addWall(left, right, top, bottom);
+          this.wallAnchor = null;
+        }
+        break;
+      case em.enemy:
+        this.addEnemy(x, y);
+        break;
+      case em.spawn:
+        this.addSpawn(x, y);
+        break;
+      case em.region:
+        if (!this.regionAnchor) {
+          this.regionAnchor = [x, y];
+        }
+        else {
+          var a1 = this.regionAnchor;
+          var a2 = [x, y];
+          var left = Math.min(a1[0], a2[0]);
+          var right = Math.max(a1[0], a2[0]);
+          var top = Math.max(a1[1], a2[1]);
+          var bottom = Math.min(a1[1], a2[1]);
+          this.addRegion(left, right, top, bottom);
+          this.regionAnchor = null;
+        }
+        break;
+    }
+  }
+
   update(dT) {
 
   }
@@ -172,6 +221,11 @@ class Editor {
       this.ctx.fillRect(this.wallAnchor[0] - 3, this.wallAnchor[1] - 3, 6, 6);
     }
 
+    if (this.regionAnchor != null) {
+      this.ctx.fillStyle = "#0077FF";
+      this.ctx.fillRect(this.regionAnchor[0] - 3, this.regionAnchor[1] - 3, 6, 6);
+    }
+
     this.ctx.strokeStyle = "#FFFFFF";
     this.ctx.lineWidth = 1;
     this.ctx.beginPath();
@@ -190,31 +244,37 @@ class Editor {
 
   switchToolState(ts) {
     this.resetToolState();
+    var tsm = this.toolStateMap;
+    var emm = this.editModeMap;
     switch (ts) {
-      case 0:
-        this.spawnEditMode = true;
+      case tsm.spawn:
+        this.editMode = emm.spawn;
         this.spawnControlsElem.style.display = "flex";
         break;
-      case 1:
-        this.wallEditMode = true;
+      case tsm.wall:
+        this.editMode = emm.wall;
         this.wallControlsElem.style.display = "flex";
         break;
-      case 2:
-        this.enemyEditMode = true;
+      case tsm.enemy:
+        this.editMode = emm.enemy;
         this.enemyControlsElem.style.display = "flex";
+        break;
+      case tsm.region:
+        this.editMode = emm.region;
+        this.regionControlsElem.style.display = "flex";
         break;
     }
   }
 
   resetToolState() {
     this.wallAnchor = null;
-    this.wallEditMode = false;
-    this.enemyEditMode = false;
-    this.spawnEditMode = false;
+    this.regionAnchor = null;
+    this.editMode = null;
 
     this.enemyControlsElem.style.display = "none";
     this.wallControlsElem.style.display = "none";
     this.spawnControlsElem.style.display = "none";
+    this.regionControlsElem.style.display = "none";
   }
 
   addEnemy(x, y) {
@@ -232,6 +292,16 @@ class Editor {
     var wall = new WallT(x, y, w, h, 0);
     this.walls.push(wall);
     this.entities.push(wall);
+  }
+
+  addRegion(left, right, top, bottom) {
+    var x = right - ((right - left) / 2);
+    var y = top - ((top - bottom) / 2);
+    var w = (right - left);
+    var h = (top - bottom);
+    var region = new RegionT(x, y, w, h, 0);
+    this.regions.push(region);
+    this.entities.push(region);
   }
 
   addSpawn(x, y) {
@@ -287,6 +357,16 @@ class Editor {
       }
     }
 
+    var regions = data.entities.regions;
+    if (regions != null) {
+      for (i = 0; i < regions.length; i++) {
+        var r = regions[i];
+        var nr = new RegionT(r.x, r.y, r.w, r.h, r.type);
+        this.regions.push(nr);
+        this.entities.push(nr);
+      }
+    }
+
   }
 
   exportLevel() {
@@ -307,6 +387,7 @@ class Editor {
     var ed = {
       enemies: [],
       walls: [],
+      regions: [],
     };
 
     var i;
@@ -325,6 +406,17 @@ class Editor {
         y: w.y,
         w: w.w,
         h: w.h,
+        type: w.type
+      });
+    }
+
+    for (i = 0; i < this.regions.length; i++) {
+      var r = this.regions[i];
+      ed.regions.push({
+        x: r.x,
+        y: r.y,
+        w: r.w,
+        h: r.h,
         type: w.type
       });
     }

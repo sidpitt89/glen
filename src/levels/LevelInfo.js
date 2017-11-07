@@ -112,6 +112,20 @@ class LevelInfo {
       }
     };
 
+    li.regionInitFunction = function (info, game, uli) {
+      var regions = uli.entities.regions;
+      for (var i = 0; i < regions.length; i++) {
+        info.x = regions[i].x;
+        info.y = regions[i].y;
+        info.w = regions[i].w;
+        info.h = regions[i].h;
+        info.type = regions[i].type; // TODO: Use type to determine which constructor to use (i.e. Wall, Glass, etc.)
+        var region = new Region(info);
+        game.entities.push(region);
+        game.regions.push(region);
+      }
+    };
+
     li.shooterInitFunction = function (info, game, uli) {
       if (uli.spawn != null) {
         info.x = uli.spawn.x;
@@ -215,6 +229,21 @@ class LevelInfo {
       ],
     };
 
+    var regionInfo = {
+      x: 0,
+      y: 0,
+      z: 0,
+      w: 0,
+      h: 0,
+      game: this.game,
+      programInfo: this.renderer.programInfoBasic,
+      bufferInfo: this.renderer.squareBufferInfo,
+      uniforms: this.renderer.regionUniforms,
+      regions: [
+        // x, y, w, h TODO: region type?
+      ],
+    };
+
     var shooterEmitterInfo = {
       x: 0,
       y: 0,
@@ -242,6 +271,7 @@ class LevelInfo {
     info.interactivesInfo = barrelInfo;
     info.wallInfo = wallInfo;
     info.shooterInfo = shooterInfo;
+    info.regionInfo = regionInfo;
 
     info.enemyInitFunction = function (info, game) {
 
@@ -259,6 +289,10 @@ class LevelInfo {
     };
 
     info.wallInitFunction = function (info, game) {
+
+    };
+
+    info.regionInitFunction = function (info, game) {
 
     };
 

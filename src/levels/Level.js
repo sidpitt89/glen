@@ -36,6 +36,7 @@ class Level {
     game.enemies = [];
     game.projectileSources = [];
     game.walls = [];
+    game.regions = [];
 
     this.initEnemies(game);
     this.initInteractives(game);
@@ -127,6 +128,13 @@ class Level {
     c = level.uniqueLevelInfo.entities.walls;
     for (i = 0; i < c.length; i++) {
       c[i].y = cH - c[i].y;
+    }
+
+    c = level.uniqueLevelInfo.entities.regions;
+    if (c != null) {
+      for (i = 0; i < c.length; i++) {
+        c[i].y = cH - c[i].y;
+      }
     }
 
     if (level.uniqueLevelInfo.spawn) {

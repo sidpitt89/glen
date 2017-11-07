@@ -20,6 +20,7 @@
         <div class="ecRow">
           <button id="wallMode">Wall</button>
           <button id="enemyMode">Enemy</button>
+          <button id="regionMode">Region</button>
           <button id="spawnMode">Spawn</button>
         </div>
         <div class="ecRow" id="sideRowOne">
@@ -34,6 +35,12 @@
           <div id="wallControls" class="controlGroup">
             <label for="wallTypeSelect">Type:&nbsp;&nbsp;</label>
             <select id="wallTypeSelect" style="height:20px;">
+              <option value="0">Standard</option>
+            </select>
+          </div>
+          <div id="regionControls" class="controlGroup">
+            <label for="regionTypeSelect">Type:&nbsp;&nbsp;</label>
+            <select id="regionTypeSelect" style="height:20px;">
               <option value="0">Standard</option>
             </select>
           </div>
@@ -100,6 +107,7 @@
     <script src="src/Editor/Editor.js"></script>
     <script src="src/Editor/TypeDefs/EnemyT.js"></script>
     <script src="src/Editor/TypeDefs/WallT.js"></script>
+    <script src="src/Editor/TypeDefs/RegionT.js"></script>
     <script src="src/Editor/editorMain.js"></script>
   </body>
 </html>
