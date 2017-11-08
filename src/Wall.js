@@ -8,6 +8,8 @@ class Wall extends Entity{
   }
 
   render(r) {
+    r.setProgram(this.programInfo);
     super.render(r);
+    r.resetProgram();
   }
 }

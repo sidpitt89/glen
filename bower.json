@@ -16,6 +16,6 @@
     "tests"
   ],
   "dependencies": {
-    "twgl.js": "^3.4.0"
+    "twgl.js": "^3.8.0"
   }
 }

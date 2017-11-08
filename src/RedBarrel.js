@@ -32,7 +32,9 @@ class RedBarrel extends Enemy{
   }
 
   render(r) {
+    r.setProgram(this.programInfo);
     super.render(r);
+    r.resetProgram();
   }
 
   setEntityUniforms() {

@@ -2,6 +2,7 @@ class Renderer {
   constructor(parent) {
     this.parent = parent;
     twgl.setAttributePrefix("a_"); // Not sure if this is super important..
+    twgl.setDefaults({crossOrigin: ""});
     this.m4 = twgl.m4;
     this.canvas = document.getElementById("canvas");
     this.gl = twgl.getWebGLContext(this.canvas, {
@@ -13,10 +14,16 @@ class Renderer {
     this.gl.enable(this.gl.BLEND);
 
     this.programInfoBasic = twgl.createProgramInfo(this.gl, ["vs", "fs"]);
+    this.textureProgramInfo = twgl.createProgramInfo(this.gl, ["tvs", "tfs"]);
 
     // TODO: Right now only one shader is used, so I'm just calling this here
-    // one time. but
-    this.gl.useProgram(this.programInfoBasic.program);
+    // one time.
+    this.setProgram(this.programInfoBasic);
+    // this.gl.useProgram(this.programInfoBasic.program);
+
+    this.textures = twgl.createTextures(this.gl, {
+      t1: {src: "assets/images/p1.png"},
+    });
 
     this.u_matrix = this.m4.identity();
 
@@ -154,10 +161,14 @@ class Renderer {
     this.barrelUniforms = {
       u_matrix: this.m4.identity(),
       u_color: [1, 0.5, 0.5, 1.0],
+      u_diffuse: this.textures.t1,
+      u_diffuseMult: [1, 1, 1, 1],
     };
     this.wallUniforms = {
       u_matrix: this.m4.identity(),
       u_color: [1, 1, 0.5, 1.0],
+      u_diffuse: this.textures.t1,
+      u_diffuseMult: [1, 1, 1, 1],
     };
     this.regionUniforms = {
       u_matrix: this.m4.identity(),
@@ -256,5 +267,18 @@ class Renderer {
 
   resetDrawObjects() {
     this.drawObjectsLists = {};
+  }
+
+  setProgram(p) {
+    if (this.currentProgram === p) {
+      return;
+    }
+
+    this.currentProgram = p;
+    this.gl.useProgram(p.program);
+  }
+
+  resetProgram() {
+    this.setProgram(this.programInfoBasic);
   }
 }

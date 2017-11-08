@@ -382,7 +382,7 @@ class LevelInfo {
       vX: 0,
       game: this.game,
       health: 5,
-      programInfo: this.renderer.programInfoBasic,
+      programInfo: this.renderer.textureProgramInfo,
       bufferInfo: this.renderer.squareBufferInfo,
       uniforms: this.renderer.barrelUniforms,
       movementBounds: [0, this.renderer.gl.canvas.width, this.renderer.gl.canvas.height, 0],
@@ -395,7 +395,7 @@ class LevelInfo {
       w: 0,
       h: 0,
       game: this.game,
-      programInfo: this.renderer.programInfoBasic,
+      programInfo: this.renderer.textureProgramInfo,
       bufferInfo: this.renderer.squareBufferInfo,
       uniforms: this.renderer.wallUniforms,
       walls: [

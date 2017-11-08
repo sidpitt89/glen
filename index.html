@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>glentest</title>
     <!-- <script type="text/javascript" src="https://spectorcdn.babylonjs.com/spector.bundle.js"></script> -->
-    <script src="bower_components/twgl.js/dist/2.x/twgl-full.js"></script>
+    <script src="bower_components/twgl.js/dist/3.x/twgl-full.js"></script>
 
     <link rel="stylesheet" type="text/css" href="styles/main.css">
   </head>
@@ -39,6 +39,37 @@
       uniform vec4 u_color;
       void main(void) {
         gl_FragColor = u_color;
+      }
+    </script>
+    <script id="tvs" type="notjs">
+      uniform mat4 u_matrix;
+
+      attribute vec4 a_position;
+      attribute vec2 a_texcoord;
+
+      varying vec4 v_position;
+      varying vec2 v_texCoord;
+
+      void main() {
+        v_texCoord = a_texcoord;
+        gl_Position = u_matrix * a_position;
+      }
+    </script>
+    <script id="tfs" type="notjs">
+      precision mediump float;
+
+      varying vec4 v_position;
+      varying vec2 v_texCoord;
+
+      uniform vec4 u_diffuseMult;
+      uniform sampler2D u_diffuse;
+
+      void main() {
+        vec4 diffuseColor = texture2D(u_diffuse, v_texCoord) * u_diffuseMult;
+        if (diffuseColor.a < 0.1) {
+          discard;
+        }
+        gl_FragColor = diffuseColor;
       }
     </script>
     <script src="src/Renderer.js"></script>
